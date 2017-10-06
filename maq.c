@@ -207,15 +207,15 @@ void exec_maquina(Maquina *m, int n) {
                 /* Move RSP para alocar espaço suficiente para variáveis locais
                 em um novo frame.*/
                 tmp = rsp+arg;
-                if (temp > PILMAX)
+                if (tmp > PILMAX)
                     Fatal("Alocacao fora do limite da pilha", 4);
-                rsp = temp;
+                rsp = tmp;
                 break;
             case FRE:
                 /* Desfaz o ALC anterior e não precisa de argumento, o que
                 evita desalocar um valor maior que o tamanho do frame. */
                 tmp = rsp-arg;
-                if (temp < rbp)
+                if (tmp < rbp)
                     Fatal("Desalocacao fora do limite do frame", 4);
                 rsp = tmp;
                 break;

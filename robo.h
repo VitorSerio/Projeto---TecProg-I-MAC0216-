@@ -1,5 +1,7 @@
+#include "maq.h"
 
 typedef struct {
+    Maquina maq;
     int x;
     int y;
 } Robo;

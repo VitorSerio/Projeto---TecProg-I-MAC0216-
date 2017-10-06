@@ -44,12 +44,14 @@ MODIFICAÇÕES:
             RBP + argumento da pilha de execução.
             - Causa erro fatal se RBP + argumento for um valor fora do frame da
             função.
+            - OBS: o argumento inicia em 0, não em 1.
         - RCE:
             - Recebe argumento numérico não-negativo.
             - Copia valor da posição RBP + argumento da pilha de execução e o
             empilha na pilha de dados.
             - Causa erro fatal se RBP + argumento for um valor fora do frame da
             função.
+            - OBS: o argumento inicia em 0, não em 1.
         - ACL:
             - Recebe argumento numérico não-negativo.
             - Aloca um espaço igual a argumento para que uma função possa usar
