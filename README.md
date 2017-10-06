@@ -3,9 +3,9 @@
 
 Data: 06/10/2017
 
-*Autores*: Rafael Augusto Brandão        (7700827)
-         Vitor Barbosa Sério           (7627627)
-         Vivian do Amaral Daud Horing  (8125014)
+*Autores*: - Rafael Augusto Brandão        (7700827)
+           - Vitor Barbosa Sério           (7627627)
+           - Vivian do Amaral Daud Horing  (8125014)
 
 ### FASE 2
 
@@ -24,23 +24,23 @@ MODIFICAÇÕES:
     da contagem de instruções (ip).
 
 - instr.h:
-    - Acrescentadas as intruções STL, RCE, ACL e FRE a OpCode.
+    - Acrescentadas as intruções STL, RCE, ACL e FRE a `OpCode`.
 
 - maq.h:
     - Adicionado inteiro rbp ao struct Maquina, que será usado para apontar a
     base dos frames da pilha de execução.
 
 - maq.c:
-    - Criação dos macros rbp e rsp:
-        - rbp:
-            - Equivale a m->rbp
-            - Referente ao valor do rbp da Maquina m
-            - rbp é inicializado valendo 0
-        - rsp:
-            - Equivale a exec->topo
-            - Referente ao valor do topo da pilha de execução de m
+    - Criação dos macros `rbp` e `rsp`:
+        - `rbp`:
+            - Equivale a `m->rbp`
+            - Referente ao valor do `rbp` da `Maquina m`
+            - `rbp` é inicializado valendo 0
+        - `rsp`:
+            - Equivale a `exec->topo`
+            - Referente ao valor do topo da pilha de execução de `m`
 
-    - Acrescentadas as intruções STL, RCE, ACL e FRE a *CODES.
+    - Acrescentadas as intruções STL, RCE, ACL e FRE a `*CODES`.
 
     - Intruções STL, RCE, ACL e FRE foram implementadas:
         - STL:
