@@ -1,5 +1,9 @@
 #include "exercito.h"
 
+union Celula {
+    
+};
+
 typedef struct {
     int mapa[][];
     Exercito exercitos[];
