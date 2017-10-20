@@ -1,62 +1,68 @@
 #!/usr/bin/python3
 
-"""
-Lê, na entrada padrão, um programa na linguagem de montagem da máquina
-virtual e retorna um programa em C que executa este programa.
+def convertArg(arg):
+    switcher {
+        "NUM": 
+    }
 
-Uso:
-    montador < entrada > saida
-"""
-from sys import stdin
+def main():
+    """
+    Lê, na entrada padrão, um programa na linguagem de montagem da máquina
+    virtual e retorna um programa em C que executa este programa.
 
-# Adicionando dependências
-print("#include <stdio.h>")
-print('#include "maq.h"\n')
+    Uso:
+        montador < entrada > saida
+    """
+    from sys import stdin
 
-l = stdin.readline()
-ip = 0
+    # Adicionando dependências
+    print("#include <stdio.h>")
+    print('#include "maq.h"\n')
 
-tabsim = {}
-
-print("INSTR prog[] = {")
-while l:
-    label = op = ""
-    arg   = 0
-    try:
-        l = l[:l.index('#')]
-    except:
-        pass
-    keys = l.split()
-    if len(keys) > 0 and keys[0].endswith(":"):
-        label = keys[0][:-1]              #jogando fora o ':'
-        tabsim[label]=ip
-        keys.pop(0)
-    if len(keys) > 0:
-        op = keys.pop(0)
-    if len(keys) > 0:
-        arg = keys.pop(0)
-        if arg in tabsim:
-            arg = tabsim[arg]
-    if op != "":
-        print("    {%s, %s},"%(op,arg))
-    else:
-        print()
-        # desconta linhas de vazias da contagem de intruções
-        ip -= 1
     l = stdin.readline()
-    ip += 1
-print("};\n")
+    ip = 0
 
-print("int main(int ac, char **av) {")
-print("    Maquina *maq = cria_maquina(prog);")
-print("    exec_maquina(maq, %d);"%(50))
-print('    puts("----------");')
-print("    exec_maquina(maq, %d);"%(100))
-print('    puts("----------");')
-print("    exec_maquina(maq, %d);"%(200))
-print("    destroi_maquina(maq);")
-print("    return 0;")
-print("}")
+    tabsim = {}
+
+    print("INSTR prog[] = {")
+    while l:
+        label = op = ""
+        arg   = 0
+        try:
+            l = l[:l.index('#')]
+        except:
+            pass
+        keys = l.split()
+        if len(keys) > 0 and keys[0].endswith(":"):
+            label = keys[0][:-1]              #jogando fora o ':'
+            tabsim[label]=ip
+            keys.pop(0)
+        if len(keys) > 0:
+            op = keys.pop(0)
+        if len(keys) > 0:
+            arg = keys.pop(0)
+            if arg in tabsim:
+                arg = tabsim[arg]
+        if op != "":
+            print("    {%s, %s},"%(op, arg))
+        else:
+            print()
+            # desconta linhas de vazias da contagem de intruções
+            ip -= 1
+        l = stdin.readline()
+        ip += 1
+    print("};\n")
+
+    print("int main(int ac, char **av) {")
+    print("    Maquina *maq = cria_maquina(prog);")
+    print("    exec_maquina(maq, %d);"%(50))
+    print("    puts("----------");")
+    print("    exec_maquina(maq, %d);"%(100))
+    print("    puts("----------");")
+    print("    exec_maquina(maq, %d);"%(200))
+    print("    destroi_maquina(maq);")
+    print("    return 0;")
+    print("}")
 
 
 # Local variables:

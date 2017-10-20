@@ -1,3 +1,8 @@
+#ifndef INSTR_H
+#define INSTR_H
+
+#include "operando.h"
+
 /* Códigos das instruções */
 typedef enum {
     PUSH,
@@ -28,29 +33,14 @@ typedef enum {
     RCE,
     ALC,
     FRE,
+    ATR,
+    SIS
 } OpCode;
-
-/* Tipos dos operandos */
-/* no momento, são todos inteiros */
-typedef enum {
-    NUM,
-    ACAO,
-    VAR
-} Tipo;
-
-/* Operando */
-/* typedef struct { */
-/*   Tipo t; */
-/*   union { */
-/* 	int n; */
-/* 	int ac; */
-/* 	int v; */
-/*   }; */
-/* } OPERANDO; */
-typedef int OPERANDO;
 
 /* Instrução */
 typedef struct {
     OpCode instr;
     OPERANDO op;
 } INSTR;
+
+#endif

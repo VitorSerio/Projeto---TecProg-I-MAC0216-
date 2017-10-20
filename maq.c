@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "maq.h"
+#include "pilha.h"
+#include "arena.h"
 
 // #define DEBUG
 
@@ -34,7 +36,8 @@ char *CODES[] = {
     "STL",
     "RCE",
     "ALC",
-    "FRE"
+    "FRE",
+    "ATR"
 };
 #else
 #   define D(X)
@@ -80,7 +83,10 @@ void exec_maquina(Maquina *m, int n) {
         D(printf("%3d: %-4.4s %d\n     ", ip, CODES[opc], arg));
 
         switch (opc) {
-            OPERANDO tmp;
+            int tmp;
+            OPERANDO tmp1;
+            OPERANDO tmp2;
+            OPERANDO tmp3;
             case PUSH:
                 empilha(pil, arg);
                 break;
@@ -88,137 +94,299 @@ void exec_maquina(Maquina *m, int n) {
                 desempilha(pil);
                 break;
             case DUP:
-                tmp = desempilha(pil);
-                empilha(pil, tmp);
-                empilha(pil, tmp);
+                tmp1 = desempilha(pil);
+                empilha(pil, tmp1);
+                empilha(pil, tmp1);
                 break;
             case ADD:
-                empilha(pil, desempilha(pil)+desempilha(pil));
-                break;
+                tmp1 = desempilha(pil);
+                tmp2 = desempilha(pil);
+                if (tmp1.t == NUM && tmp2.t == NUM) {
+                    tmp1.val.n += tmp2.val.n;
+                    empilha(pil, tmp1);
+                    break;
+                }
+                printf("Linha %d\n", ip);
+                Fatal("Erro: OPERANDO nao numerico", 4);
             case SUB:
-                tmp = desempilha(pil);
-                empilha(pil, desempilha(pil)-tmp);
-                break;
+                tmp1 = desempilha(pil);
+                tmp2 = desempilha(pil);
+                if (tmp1.t == NUM && tmp2.t == NUM) {
+                    tmp2.val.n -= tmp1.val.n;
+                    empilha(pil, tmp2);
+                    break;
+                }
+                printf("Linha %d\n", ip);
+                Fatal("Erro: OPERANDO nao numerico", 4);
             case MUL:
-                empilha(pil, desempilha(pil)*desempilha(pil));
-                break;
+                tmp1 = desempilha(pil);
+                tmp2 = desempilha(pil);
+                if (tmp1.t == NUM && tmp2.t == NUM) {
+                    tmp1.val.n *= tmp2.val.n;
+                    empilha(pil, tmp1);
+                    break;
+                }
+                printf("Linha %d\n", ip);
+                Fatal("Erro: OPERANDO nao numerico", 4);
             case DIV:
-                tmp = desempilha(pil);
-                empilha(pil, desempilha(pil)/tmp);
-                break;
+                tmp1 = desempilha(pil);
+                tmp2 = desempilha(pil);
+                if (tmp1.t == NUM && tmp2.t == NUM) {
+                    tmp2.val.n /= tmp1.val.n;
+                    empilha(pil, tmp2);
+                    break;
+                }
+                printf("Linha %d\n", ip);
+                Fatal("Erro: OPERANDO nao numerico", 4);
             case JMP:
-                ip = arg;
+                ip = arg.val.n;
                 continue;
             case JIT:
-                if (desempilha(pil) != 0) {
-                    ip = arg;
-                    continue;
+                tmp1 = desempilha(pil);
+                if (tmp1.t == NUM) {
+                    if (tmp1.val.n) {
+                        ip = arg.val.n;
+                        continue;
+                    }
+                    break;
                 }
-                break;
+                printf("Linha %d\n", ip);
+                Fatal("Erro: OPERANDO nao numerico", 4);
             case JIF:
-                if (desempilha(pil) == 0) {
-                    ip = arg;
-                    continue;
+                tmp1 = desempilha(pil);
+                if (tmp1.t == NUM) {
+                    if (!tmp1.val.n) {
+                        ip = arg.val.n;
+                        continue;
+                    }
+                    break;
                 }
-                break;
+                printf("Linha %d\n", ip);
+                Fatal("Erro: OPERANDO nao numerico", 4);
             case CALL:
-                empilha(exec, ip);
+                tmp1.t = NUM;
+                tmp1.val.n = ip;
+                empilha(exec, tmp1);
                 // Empilha valor do RBP para ser recuperado depois, com RET.
-                empilha(exec, rbp);
+                tmp1.t = NUM;
+                tmp1.val.n = rbp;
+                empilha(exec, tmp1);
                 /* Atualiza RBP
-                Da forma como está, RBP aponta para a primeira posição vazia do
-                novo frame, ou seja, para adicionar ou copiar valores ao
+                Da forma como está, RBP aponta para a primeira posição vazia
+                do novo frame, ou seja, para adicionar ou copiar valores ao
                 primeiro espaço do frame, se utiliza STL 0 e RCE 0,
                 respectivamente. */
                 rbp = rsp;
-                ip = arg;
+                ip = arg.val.n;
                 continue;
             case RET:
                 // Recupera valor anterior do RBP.
                 if (rsp != rbp) {
-                    Erro("Espaco nao desalocado. Desalocacao forcada.");
+                    printf("Linha %d\n", ip);
+                    Erro("Aviso: Espaco nao desalocado. Desalocacao forcada.");
                     rsp = rbp;
                 }
-                rbp = desempilha(exec);
-                ip = desempilha(exec);
+                tmp1 = desempilha(exec);
+                rbp = tmp1.val.n;
+                tmp1 = desempilha(exec);
+                ip = tmp1.val.n;
                 break;
             case EQ:
-                if (desempilha(pil) == desempilha(pil))
-                    empilha(pil, 1);
-                else
-                    empilha(pil, 0);
-                break;
+                tmp1 = desempilha(pil);
+                tmp2 = desempilha(pil);
+                if (tmp1.t == NUM && tmp2.t == NUM) {
+                    tmp3.t = NUM;
+                    if (tmp1.val.n == tmp2.val.n) {
+                        tmp3.val.n = 1;
+                        empilha(pil, tmp1);
+                    }
+                    else {
+                        tmp3.val.n = 0;
+                        empilha(pil, tmp1);
+                    }
+                    break;
+                }
+                printf("Linha %d\n", ip);
+                Fatal("Erro: OPERANDO nao numerico", 4);
             case GT:
-                if (desempilha(pil) < desempilha(pil))
-                    empilha(pil, 1);
-                else
-                    empilha(pil, 0);
-                break;
+                tmp1 = desempilha(pil);
+                tmp2 = desempilha(pil);
+                if (tmp1.t == NUM && tmp2.t == NUM) {
+                    tmp3.t = NUM;
+                    if (tmp1.val.n < tmp2.val.n) {
+                        tmp3.val.n = 1;
+                        empilha(pil, tmp1);
+                    }
+                    else {
+                        tmp3.val.n = 0;
+                        empilha(pil, tmp1);
+                    }
+                    break;
+                }
+                printf("Linha %d\n", ip);
+                Fatal("Erro: OPERANDO nao numerico", 4);
             case GE:
-                if (desempilha(pil) <= desempilha(pil))
-                    empilha(pil, 1);
-                else
-                    empilha(pil, 0);
-                break;
+                tmp1 = desempilha(pil);
+                tmp2 = desempilha(pil);
+                if (tmp1.t == NUM && tmp2.t == NUM) {
+                    tmp3.t = NUM;
+                    if (tmp1.val.n <= tmp2.val.n) {
+                        tmp3.val.n = 1;
+                        empilha(pil, tmp1);
+                    }
+                    else {
+                        tmp3.val.n = 0;
+                        empilha(pil, tmp1);
+                    }
+                    break;
+                }
+                printf("Linha %d\n", ip);
+                Fatal("Erro: OPERANDO nao numerico", 4);
             case LT:
-                if (desempilha(pil) > desempilha(pil))
-                    empilha(pil, 1);
-                else
-                    empilha(pil, 0);
-                break;
+                tmp1 = desempilha(pil);
+                tmp2 = desempilha(pil);
+                if (tmp1.t == NUM && tmp2.t == NUM) {
+                    tmp3.t = NUM;
+                    if (tmp1.val.n > tmp2.val.n) {
+                        tmp3.val.n = 1;
+                        empilha(pil, tmp1);
+                    }
+                    else {
+                        tmp3.val.n = 0;
+                        empilha(pil, tmp1);
+                    }
+                    break;
+                }
+                printf("Linha %d\n", ip);
+                Fatal("Erro: OPERANDO nao numerico", 4);
             case LE:
-                if (desempilha(pil) >= desempilha(pil))
-                    empilha(pil, 1);
-                else
-                    empilha(pil, 0);
-                break;
+                tmp1 = desempilha(pil);
+                tmp2 = desempilha(pil);
+                if (tmp1.t == NUM && tmp2.t == NUM) {
+                    tmp3.t = NUM;
+                    if (tmp1.val.n >= tmp2.val.n) {
+                        tmp3.val.n = 1;
+                        empilha(pil, tmp1);
+                    }
+                    else {
+                        tmp3.val.n = 0;
+                        empilha(pil, tmp1);
+                    }
+                    break;
+                }
+                printf("Linha %d\n", ip);
+                Fatal("Erro: OPERANDO nao numerico", 4);
             case NE:
-                if (desempilha(pil) != desempilha(pil))
-                    empilha(pil, 1);
-                else
-                    empilha(pil, 0);
-                break;
+                tmp1 = desempilha(pil);
+                tmp2 = desempilha(pil);
+                if (tmp1.t == NUM && tmp2.t == NUM) {
+                    tmp3.t = NUM;
+                    if (tmp1.val.n != tmp2.val.n) {
+                        tmp3.val.n = 1;
+                        empilha(pil, tmp1);
+                    }
+                    else {
+                        tmp3.val.n = 0;
+                        empilha(pil, tmp1);
+                    }
+                    break;
+                }
+                printf("Linha %d\n", ip);
+                Fatal("Erro: OPERANDO nao numerico", 4);
             case STO:
-                m->Mem[arg] = desempilha(pil);
+                if (arg.val.n < 0 || arg.val.n > MAXMEM) {
+                    printf("Linha %d\n", ip);
+                    Fatal("Erro: Acesso fora dos limites da memoria", 4);
+                }
+                m->Mem[arg.val.n] = desempilha(pil);
                 break;
             case RCL:
-                empilha(pil,m->Mem[arg]);
+                if (arg.val.n < 0 || arg.val.n > MAXMEM) {
+                    printf("Linha %d\n", ip);
+                    Fatal("Erro: Acesso fora dos limites da memoria", 4);
+                }
+                empilha(pil, m->Mem[arg.val.n]);
                 break;
             case END:
                 return;
             case PRN:
-                printf("%d\n", desempilha(pil));
+                printf("%s\n", toString(desempilha(pil)));
                 break;
             /* STL e RCE verificam se o índice dado vai estar dentro dos
             limites do frame antes de executar suas ações. */
             case STL:
-                tmp = arg+rbp;
-                if (tmp > rsp - 1 || arg < 0)
-                    Fatal("Posicao fora do limite do frame", 4);
+                /* Adiciona o valor de uma variável local na pilha de execução
+                na posição dada */
+                tmp = arg.val.n + rbp;
+                if (tmp > rsp - 1 || arg.val.n < 0)
+                    printf("Linha %d\n", ip);
+                    Fatal("Erro: Posicao fora do limite do frame", 4);
                 exec->val[tmp] = desempilha(pil);
                 break;
             case RCE:
-                tmp = arg+rbp;
-                if (tmp > rsp - 1 || arg < 0)
-                    Fatal("Posicao fora do limite do frame", 4);
+                /* Empilha o valor de uma variável local da pilha de execução,
+                na posição dada, para a pilha de dados */
+                tmp = arg.val.n + rbp;
+                if (tmp > rsp - 1 || arg.val.n < 0)
+                    printf("Linha %d\n", ip);
+                    Fatal("Erro: Posicao fora do limite do frame", 4);
                 empilha(pil, exec->val[tmp]);
                 break;
             case ALC:
                 /* Move RSP para alocar espaço suficiente para variáveis locais
-                em um novo frame.*/
-                tmp = rsp+arg;
+                em um novo frame. Verifica se a alocação não ultrapassa o
+                tamanho da pilha. */
+                tmp = rsp + arg.val.n;
                 if (tmp > PILMAX)
-                    Fatal("Alocacao fora do limite da pilha", 4);
+                    printf("Linha %d\n", ip);
+                    Fatal("Erro: Alocacao fora do limite da pilha", 4);
                 rsp = tmp;
                 break;
             case FRE:
-                /* Desfaz o ALC anterior e não precisa de argumento, o que
-                evita desalocar um valor maior que o tamanho do frame. */
-                tmp = rsp-arg;
+                /* Move RSP para desalocar espaço de variáveis locais no frame
+                atual. Verifica se a desalocação não excede o limite do
+                frame. */
+                tmp = rsp - arg.val.n;
                 if (tmp < rbp)
-                    Fatal("Desalocacao fora do limite do frame", 4);
+                    printf("Linha %d\n", ip);
+                    Fatal("Erro: Desalocacao fora do limite do frame", 4);
                 rsp = tmp;
                 break;
+            case ATR:
+                /*  */
+                tmp1 = desempilha(pil);
+                if (tmp1.t != CELULA) {
+                    printf("Linha %d\n", ip);
+                    Fatal("Erro: Atributos só podem ser obtidos de celulas", 4);
+                }
+                tmp2.t = NUM;
+                switch (arg.val.n) {
+                    case 1:
+                        tmp2.val.n = tmp1.val.cel.terreno;
+                        break;
+                    case 2:
+                        tmp2.val.n = tmp1.val.cel.cristais;
+                        break;
+                    case 3:
+                        tmp2.val.n = tmp1.val.cel.ocupado;
+                        break;
+                    default:
+                        printf("Linha %d\n", ip);
+                        Fatal("Erro: Argumento ilegal para atributo", 4);
+                }
+                break;
+            case SIS:
+                /*  */
+                if (arg.t == ACAO) {
+                    tmp1 = Sistema(arg);
+                    if (tmp1.val.ac.t == GET) empilha(pil, tmp1);
+                    break;
+                }
+                printf("Linha %d\n", ip);
+                Fatal("Erro: O sistema so pode ser chamado por uma acao", 4);
+            default:
+                printf("Linha %d\n", ip);
+                Fatal("Erro: Instrucao nao definida", 4);
         }
         D(imprime(pil,5));
         D(puts("\n"));

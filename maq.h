@@ -1,11 +1,14 @@
+#ifndef MAQ_H
+#define MAQ_H
+
 #include "pilha.h"
 
-#define MAXMEM 100
+#define MAXMEM 99
 
 typedef struct {
     Pilha pil;
     Pilha exec;
-    OPERANDO Mem[MAXMEM];
+    OPERANDO Mem[MAXMEM+1];
     INSTR *prog;
     int rbp;
     int ip;
@@ -16,3 +19,5 @@ Maquina *cria_maquina(INSTR *p);
 void destroi_maquina(Maquina *m);
 
 void exec_maquina(Maquina *m, int n);
+
+#endif
