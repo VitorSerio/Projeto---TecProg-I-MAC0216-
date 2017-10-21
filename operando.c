@@ -14,13 +14,7 @@ static char *stringFromTipoAc(TipoAc t) {
     return strings[t];
 }
 
-static char *stringFromTipo(Tipo t) {
-    char * restrict strings[] = {
-        "NUM", "ACAO", "CELULA"};
-    return strings[t];
-}
-
-static char *stringFromDirecao(Tipo d) {
+static char *stringFromDirecao(Direcao d) {
     int t = (int) d;
     char * restrict strings[] = {
         "-A3", "-A2", "-A1", "A1", "A2", "A3"};
@@ -30,21 +24,20 @@ static char *stringFromDirecao(Tipo d) {
 
 char *toString(OPERANDO op) {
     int size = 50;
-    char str[size];
-    char *res = &str[0];
+    char *res = (char*)malloc(size);
 
     switch (op.t) {
         case NUM:
-            snprintf(res, size, "{%s, %d}", stringFromTipo(op.t), op.val.n);
+            snprintf(res, size, "{NUM, %d}", op.val.n);
             break;
         case ACAO:
-            snprintf(res, size, "{%s, {%s, %s}}", stringFromTipo(op.t),
+            snprintf(res, size, "{ACAO, {%s, %s}}",
                      stringFromTipoAc(op.val.ac.t),
                      stringFromDirecao(op.val.ac.d));
             break;
         case CELULA:
-            snprintf(res, size, "{%s, {%s, %d, %d}}", stringFromTipo(op.t),
-                     stringFromTipoAc(op.val.cel.terreno), op.val.cel.cristais,
+            snprintf(res, size, "{CELULA, {%s, %d, %d}}",
+                     stringFromTerreno(op.val.cel.terreno), op.val.cel.cristais,
                      op.val.cel.ocupado);
             break;
     }
@@ -52,28 +45,28 @@ char *toString(OPERANDO op) {
     return res;
 }
 
-int main() {
-    OPERANDO op[] = {
-        {.t = NUM, .val.n = 5},
-        {.t = ACAO, .val.ac = {.t = MOV, .d = A1}},
-        {.t = ACAO, .val.ac = {.t = ATK, .d = A2}},
-        {.t = ACAO, .val.ac = {.t = GET, .d = A3}},
-        {.t = ACAO, .val.ac = {.t = PEG, .d = A1_}},
-        {.t = ACAO, .val.ac = {.t = DEP, .d = A2_}},
-        {.t = ACAO, .val.ac = {.t = MOV, .d = A3_}},
-        {.t = CELULA, .val.cel = {.terreno = ESTRADA, .cristais = 0, .ocupado = 0}},
-        {.t = CELULA, .val.cel = {.terreno = GRAMA, .cristais = 3, .ocupado = 1}},
-        {.t = CELULA, .val.cel = {.terreno = MONTANHA, .cristais = 8, .ocupado = 0}},
-        {.t = CELULA, .val.cel = {.terreno = RIO, .cristais = 0, .ocupado = 0}},
-        {.t = CELULA, .val.cel = {.terreno = BASE, .cristais = 5, .ocupado = 1}},
-    };
-
-    int i;
-    int n = sizeof(op) / sizeof(OPERANDO);
-    for (i = 0; i < n; i++) {
-        char *res = toString(op[i]);
-        printf("%s\n", res);
-    }
-
-    return 0;
-}
+// int main() {
+//     OPERANDO op[] = {
+//         {.t = NUM, .val.n = 5},
+//         {.t = ACAO, .val.ac = {.t = MOV, .d = A1}},
+//         {.t = ACAO, .val.ac = {.t = ATK, .d = A2}},
+//         {.t = ACAO, .val.ac = {.t = GET, .d = A3}},
+//         {.t = ACAO, .val.ac = {.t = PEG, .d = A1_}},
+//         {.t = ACAO, .val.ac = {.t = DEP, .d = A2_}},
+//         {.t = ACAO, .val.ac = {.t = MOV, .d = A3_}},
+//         {.t = CELULA, .val.cel = {.terreno = ESTRADA, .cristais = 0, .ocupado = 0}},
+//         {.t = CELULA, .val.cel = {.terreno = GRAMA, .cristais = 3, .ocupado = 1}},
+//         {.t = CELULA, .val.cel = {.terreno = MONTANHA, .cristais = 8, .ocupado = 0}},
+//         {.t = CELULA, .val.cel = {.terreno = RIO, .cristais = 0, .ocupado = 0}},
+//         {.t = CELULA, .val.cel = {.terreno = BASE, .cristais = 5, .ocupado = 1}},
+//     };
+//
+//     int n = sizeof(op) / sizeof(OPERANDO);
+//     for (int i = 0; i < n; i++) {
+//         char *str = toString(op[i]);
+//         printf("%s\n", str);
+//         free(str);
+//     }
+//
+//     return 0;
+// }

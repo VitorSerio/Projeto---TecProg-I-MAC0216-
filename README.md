@@ -1,28 +1,30 @@
 ## MAC0216 - Técnicas de Programação I
 # Batalha de Robôs - Projeto
 
-Data: 19/10/2017
+Data: 21/10/2017
 
-*Autores*:
+**Autores**:
 
-    - Rafael Augusto Brandão        (7700827)
-    - Vitor Barbosa Sério           (7627627)
-    - Vivian do Amaral Daud Horing  (8125014)
+    Rafael Augusto Brandão        (7700827)
+    Vitor Barbosa Sério           (7627627)
+    Vivian do Amaral Daud Horing  (8125014)
 
 
 ### FASE 2
-Data: 19/10/2017
+Data: 21/10/2017
 
 MODIFICAÇÕES:
 
 - Todos os arquivos **.h** receberam *inclusion guards*, para usar dependência
 circular.
-- Criados os arquivos **acao.h**, **celula.h**, **operando.h** e **operando.c**:
+
+- Criados os arquivos:
     - **acao.h**:
-        - Define as `enum` `Direcao` e `TipoAc`:
+        - Define:
             - `Direcao`:
+                - Tipo: `enum`
                 - Representa a direção e o sentido de uma ação.
-                - Assume os valores *A1*, *A1_*, *A2*, *A2_*, *A3* e *A3_*:
+                - Assume os valores:
                     - *A1*:
                         - Vetor: (1, 0)
                         - Valor: 1
@@ -42,8 +44,9 @@ circular.
                         - Vetor: (-1, 1)
                         - Valor: -3
             - `TipoAc`:
+                - Tipo: `enum`
                 - Representa o tipo de ação executada pelo robô.
-                - Assume os valores *MOV*, *ATK*, *GET*, *PEG* e *DEP*:
+                - Assume os valores:
                     - *MOV*:
                         - Movimentação do robô.
                         - Valor: 0
@@ -59,23 +62,24 @@ circular.
                     - *DEP*:
                         - Deposita um cristal.
                         - Valor: 4
-        - Define a `struct` `Acao`:
-            - Representa uma ação executada por um robô.
-            - Sempre necessita de chamadas ao sistema.
-            - Contém os valores `t` e `d`:
-                - `t`:
-                    - Tipo: `TipoAc`
-                    - Representa o tipo da ação.
-                - `d`:
-                    - Tipo: `Direcao`
-                    - Representa a direção da ação.
-                    
+            - Acao:
+                - Tipo: `struct`
+                - Representa uma ação executada por um robô.
+                - Sempre necessita de chamadas ao sistema.
+                - Contém os valores:
+                    - `t`:
+                        - Tipo: `TipoAc`
+                        - Representa o tipo da ação.
+                    - `d`:
+                        - Tipo: `Direcao`
+                        - Representa a direção da ação.
+
     - **celula.h**:
-        - Define a `enum` `Terreno`:
+        - Define:
             - `Terreno`:
+                - Tipo: `enum`
                 - Representa o tipo de terreno em uma célula.
-                - Assume os valores *ESTRADA*, *GRAMA*, *MONTANHA*, *RIO* e
-                *BASE*:
+                - Assume os valores:
                     - *ESTRADA*:
                         - Custo de locomoção 1.
                         - Valor: 0
@@ -91,25 +95,27 @@ circular.
                     - *BASE*:
                         - Impede locomoção.
                         - Valor: 4
-        - Define a `struct` `Celula`:
-            - Representa os dados de uma célula do mapa.
-            - Contém os valores `terreno`, `cristais`, `ocupado`:
-                - `terreno`:
-                    - Tipo: `Terreno`
-                    - Representa qual o tipo de terreno da célula.
-                - `cristais`:
-                    - Tipo: `short int`
-                    - Representa a quantidade de cristais presentes na célula.
-                - `ocupado`:
-                    - Tipo: `short int`
-                    - Representa se a célula já está ocupada por um robô.
-                    - Vale 0, se não estiver ocupada e 1, se estiver.
+            - `Celula`:
+                - Tipo: `struct`
+                - Representa os dados de uma célula do mapa.
+                - Contém os valores:
+                    - `terreno`:
+                        - Tipo: `Terreno`
+                        - Representa qual o tipo de terreno da célula.
+                    - `cristais`:
+                        - Tipo: `short int`
+                        - Representa a quantidade de cristais presentes na célula.
+                    - `ocupado`:
+                        - Tipo: `short int`
+                        - Representa se a célula já está ocupada por um robô.
+                        - Vale 0, se não estiver ocupada e 1, se estiver.
 
     - **operando.h**:
-        - Define a `enum` `Tipo`:
+        - Define a:
             - `Tipo`:
+                - Tipo: `enum`
                 - Representa o tipo de um `OPERANDO`.
-                - Assume os valores *NUM*, *ACAO* e *CELULA*:
+                - Assume os valores:
                     - *NUM*:
                         - Literais numéricos.
                         - Valor: 0
@@ -119,55 +125,199 @@ circular.
                     - *CELULA*:
                         - Dados de uma célula.
                         - Valor: 2
-        - `OPERANDO` é agora uma `struct` com os valores `t` e `val`:
-            - `t`:
-                - Tipo: `Tipo`
-                - Representa o tipo do operando.
-            - `val`:
-                - É uma `union`.
-                - Representa o valor do operando.
-                - Pode ter os valores `n`, `ac` ou `cel`:
-                    - `n`:
-                        - Tipo: `int`
-                        - Referente a inteiros literais (`t = NUM`).
-                    - `ac`:
-                        - Tipo: `Acao`
-                        - Referente a ações (`t = ACAO`).
-                    - `cel`:
-                        - Tipo: `Celula`
-                        - Referente a células (`t = CELULA`).
-        - Declara a função `char *toString(OPERANDO op)`, que converte um
-        `OPERANDO` para um `char*`.
+            - `OPERANDO`:
+                - Tipo: `struct`
+                - Contém os valores:
+                    - `t`:
+                        - Tipo: `Tipo`
+                        - Representa o tipo do operando.
+                    - `val`:
+                        - É uma `union`.
+                        - Representa o valor do operando.
+                        - Pode ter os valores `n`, `ac` ou `cel`:
+                            - `n`:
+                                - Tipo: `int`
+                                - Referente a inteiros literais (`t = NUM`).
+                            - `ac`:
+                                - Tipo: `Acao`
+                                - Referente a ações (`t = ACAO`).
+                            - `cel`:
+                                - Tipo: `Celula`
+                                - Referente a células (`t = CELULA`).
+        - Declara a função:
+            - `toString`:
+                - Retorna uma string que representa um `OPERANDO`.
+                - Recebe:
+                    - `OPERANDO op`
+                - Retorna:
+                    - `char*`
 
     - **operando.c**:
-        - Implementa a função `char *toString(OPERANDO op)`.
-        - Implementa uma função `main()` para testes.
+        - Implementa a função `toString`:
+            - É importante observar que essa função aloca espaço na memória para
+            o ponteiro `char*`, precisando que essa memória seja liberada com a
+            função `free` eventualmente.
+        - Contém uma função `main()` (comentada) para testes.
         - As outras funções são puramente auxiliares de `toString`.
 
-- **instr.h**:
-    - Acrescentadas as instruções *ATR* e *SIS* a `OpCode`.
-    - `OPERANDO` foi movido para um arquivo próprio (**operando.h**).
+    - **robo.h**:
+        - Define a `struct` `Robo`:
+            - `Robo`:
+                - Representa um robô de um exército.
+                - Contém os valores:
+                    - *m*:
+                        - Tipo: `Maquina`
+                        - É a máquina virtual do robô, que executará o seu
+                        próprio programa.
+                    - *x*:
+                        - Tipo: `int`
+                        - Representa a posição horizontal do robô na matriz
+                        quadrada (que representa a hexagonal).
+                    - *y*:
+                        - Tipo: `int`
+                        - Representa a posição vertical do robô na matriz
+                        quadrada.
+                    - *c*:
+                        - Tipo: `short int`
+                        - Representa a quantidade de cristais que está sendo
+                        carregada pelo robô.
+                    - *e*:
+                        - Tipo: `short int`
+                        - Representa a qual exército o robô pertence.
+        - Declara as funções:
+            - `cria_robo`:
+                - Função construtora do tipo `Robo`.
+                - Recebe:
+                    - `INSTR *p`:
+                        - Programa a ser executado pelo robô.
+                    - `short int e`:
+                        - Atributo *e* do robô.
+                    - `int x`:
+                        - Atributo *x* do robô.
+                    - `int y`:
+                        - Atributo *y* do robô.
+                - Retorna:
+                    - `Robo` com os atributos dados e uma `Maquina` com o
+                    programa dado.
+            - `destroi_robo`:
+                - Libera a memória alocada para um `Robo`.
+                - Recebe:
+                    - `Robo *r`:
+                        - `Robo` a ser 'desfeito'.
+                - Não possui `return`.
+            - `torca_prog`:
+                - Troca o programa a ser executado por um robô.
+                - Recebe:
+                    - `INSTR *p`:
+                        - O novo programa a ser dado pro robô.
+                    - `Robo *r`:
+                        - O robô que receberá o novo programa.
+                - Não possui `return`.
+    - **robo.c**:
+        - Implementa as funções `cria_robo`, `destroi_robo` e `troca_prog`.
+        - Implementa as funções `Erro` e `Fatal`, para gerenciamento de erros.
 
-- **maq.c**:
-    - Todas as instruções foram adaptadas ao novo formato de `OPERANDO`.
-    - As instruções *ADD*, *SUB*, *MUL*, *DIV*, *JIT*, *JIF*, *EQ*, *GT*, *GE*,
-    *LT*, *LE*, *NE*, *STO* e *RCL* agora gerenciam possíveis erros.
-    - Aprimoração das mensagens de erro:
-        - Linha com a localização do erro é fornecida.
-        - Um label 'Erro' ou 'Aviso' são usados para sinalizar um erro fatal ou
-        um erro mais simples, respectivamente.
-    - Adicionadas as instruções *ATR* e *SIS* a `*CODES`.
-    - Instruções *ATR* e *SIS* foram implementadas:
-        - *ATR*:
-            - Obtém um atributo de um `OPERANDO` do tipo `CELULA` da pilha de
-            dados.
-            - O atributo é selecionado através de um inteiro:
-                - 1: `terreno`
-                - 2: `cristais`
-                - 3: `ocupacao`
-            - Se o argumento não for um dos inteiros listados acima, causa erro
-            fatal.
-        - *SIS*:
+    - **base.h**:
+        - Define:
+            - `Base`:
+                - Tipo: `struct`
+                - Representa a base de um exército.
+                - Contém os valores:
+                    - *x*:
+                        - Tipo: `int`
+                        - Representa a posição horizontal da base na matriz
+                        quadrada (que representa a hexagonal).
+                    - *y*:
+                        - Tipo: `int`
+                        - Representa a posição vertical da base na matriz
+                        quadrada.
+                    - *e*:
+                        - Tipo: `short int`
+                        - Representa a qual exército a base pertence.
+
+    - **exercito.h**:
+        - Define *MAXVM*, que representa a quantidade máxima de robôs por
+        exército.
+        - Define:
+            - `Exercito`:
+                - Tipo: `struct`
+                - Representa um exército (time) do jogo.
+                - Contém os seguintes valores:
+                    - *robos*:
+                        - Tipo: `array` de `Robo*`
+                        - Representa todos os robôs do exército.
+                    - *b*:
+                        - Tipo: `Base`
+                        - Representa a base do exército.
+                    - *e*:
+                        - Tipo: `short int`
+                        - Identificação do exército.
+        - Declara as funções:
+            - `cria_exercito`:
+                - Função construtora do tipo `Exercito`.
+                - Recebe:
+                    - `INSTR *progs[]`:
+                        - Vetor com os programas de cada robô do exército.
+                        - O número de programas não deve exceder *MAXVM*.
+                    - `short int e`:
+                        - Identificador do exército.
+                    - `int x`:
+                        - Posição horizontal da base do exército.
+                    - `int y`:
+                        - Posição vertical da base do exército.
+                - Retorna:
+                    - `Exercito` com os atributos passados, `Robo`s com os
+                    programas em `progs[]` e uma `Base`.
+            - `destroi_exercito`:
+                - Libera a memória alocada para um `Exercito`.
+                - Recebe:
+                    - `Exercito *e`:
+                        - `Exercito` a ser 'desfeito'.
+                - Não possui `return`.
+    - **exercito.c**:
+        - Implementa as funções `cria_exercito` e `destroi_exercito`.
+        - Implementa as funções `Erro` e `Fatal`, para gerenciamento de erros.
+
+    - **arena.h**:
+    - **arena.c**:
+
+- Modificados os arquivos:
+    - **instr.h**:
+        - Acrescentadas as instruções *ATR* e *SYS* a `OpCode`.
+        - `OPERANDO` foi movido para um arquivo próprio (**operando.h**).
+
+    - **maq.c**:
+        - Todas as instruções foram adaptadas ao novo formato de `OPERANDO`.
+        - As instruções *ADD*, *SUB*, *MUL*, *DIV*, *JIT*, *JIF*, *EQ*, *GT*,
+        *GE*, *LT*, *LE*, *NE*, *STO* e *RCL* agora gerenciam possíveis erros.
+        - Aprimoração das mensagens de erro:
+            - Linha com a localização do erro é fornecida.
+            - Um label 'Erro' ou 'Aviso' são usados para sinalizar um erro
+            fatal ou um erro mais simples, respectivamente.
+        - Adicionadas as instruções *ATR* e *SYS* a `*CODES`.
+        - Implementação das instruções:
+            - *ATR*:
+                - Obtém um atributo de um `OPERANDO` do tipo `CELULA` da pilha
+                de dados.
+                - O atributo é selecionado através de um inteiro:
+                    - 1: `terreno`
+                    - 2: `cristais`
+                    - 3: `ocupado`
+                - Se o argumento não for um dos inteiros listados acima, causa
+                erro fatal.
+            - *SYS*:
+                - Faz solicitações ao sistema.
+                - Recebe argumento de `Tipo t = ACAO`
+                - A maioria das ações causa mudanças fora da máquina. Apenas
+                *GET* é exceção, empilhando os dados de uma célula na pilha de
+                dados.
+
+    - **montador**:
+        - As tarefas do montador forma modularizadas em funções internas.
+        - Agora o montador é capaz de manipular *labels*, de tal forma que
+        *jumps* possam ser executados com *labels*.
+        - A impressão das instruções foi adapdata para o novo formado de
+        `OPERANDO`.
 
 ### FASE 1
 Data: 06/10/2017

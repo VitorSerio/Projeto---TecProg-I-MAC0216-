@@ -2,35 +2,33 @@
 #include "maq.h"
 
 INSTR prog[] = {
-    {PUSH, 1},
-    {DUP, 0},
-    {STO, 0},
-    {STO, 1},
-
-    {PUSH, 10},
-    {STO, 2},
-
-    {RCL, 0},
-    {RCL, 1},
-    {DUP, 0},
-    {STO, 0},
-    {ADD, 0},
-    {DUP, 0},
-    {STO, 1},
-    {PRN, 0},
-    {RCL, 2},
-    {PUSH, 1},
-    {SUB, 0},
-    {DUP, 0},
-    {STO, 2},
-    {PUSH, 0},
-    {EQ, 0},
-    {JIF, 6},
-
-    {END, 0},
+    {PUSH, {.t = NUM, .val.n = 1}},
+    {DUP, {.t = NUM, .val.n = 0}},
+    {STO, {.t = NUM, .val.n = 0}},
+    {STO, {.t = NUM, .val.n = 1}},
+    {PUSH, {.t = NUM, .val.n = 10}},
+    {STO, {.t = NUM, .val.n = 2}},
+    {RCL, {.t = NUM, .val.n = 0}},
+    {RCL, {.t = NUM, .val.n = 1}},
+    {DUP, {.t = NUM, .val.n = 0}},
+    {STO, {.t = NUM, .val.n = 0}},
+    {ADD, {.t = NUM, .val.n = 0}},
+    {DUP, {.t = NUM, .val.n = 0}},
+    {STO, {.t = NUM, .val.n = 1}},
+    {PRN, {.t = NUM, .val.n = 0}},
+    {RCL, {.t = NUM, .val.n = 2}},
+    {PUSH, {.t = NUM, .val.n = 1}},
+    {SUB, {.t = NUM, .val.n = 0}},
+    {DUP, {.t = NUM, .val.n = 0}},
+    {STO, {.t = NUM, .val.n = 2}},
+    {PUSH, {.t = NUM, .val.n = 0}},
+    {EQ, {.t = NUM, .val.n = 0}},
+    {JIF, {.t = NUM, .val.n = 6}},
+    {SYS, {.t = ACAO, .val.ac = {.t = 0, .d = 1}}},
+    {END, {.t = NUM, .val.n = 0}},
 };
 
-int main(int ac, char **av) {
+int main() {
     Maquina *maq = cria_maquina(prog);
     exec_maquina(maq, 50);
     puts("----------");

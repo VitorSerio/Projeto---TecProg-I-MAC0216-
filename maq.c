@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "maq.h"
 #include "pilha.h"
+#include "maq.h"
 #include "arena.h"
 
 // #define DEBUG
@@ -37,14 +37,15 @@ char *CODES[] = {
     "RCE",
     "ALC",
     "FRE",
-    "ATR"
+    "ATR",
+    "SYS"
 };
 #else
 #   define D(X)
 #endif
 
 static void Erro(char *msg) {
-    fprintf(stderr, "%s\n", msg);
+    fprintf(stderr,"%s\n", msg);
 }
 
 static void Fatal(char *msg, int cod) {
@@ -87,6 +88,7 @@ void exec_maquina(Maquina *m, int n) {
             OPERANDO tmp1;
             OPERANDO tmp2;
             OPERANDO tmp3;
+            char* str;
             case PUSH:
                 empilha(pil, arg);
                 break;
@@ -310,7 +312,9 @@ void exec_maquina(Maquina *m, int n) {
             case END:
                 return;
             case PRN:
-                printf("%s\n", toString(desempilha(pil)));
+                str = toString(desempilha(pil));
+                printf("%s\n", str);
+                free(str);
                 break;
             /* STL e RCE verificam se o índice dado vai estar dentro dos
             limites do frame antes de executar suas ações. */
@@ -375,7 +379,7 @@ void exec_maquina(Maquina *m, int n) {
                         Fatal("Erro: Argumento ilegal para atributo", 4);
                 }
                 break;
-            case SIS:
+            case SYS:
                 /*  */
                 if (arg.t == ACAO) {
                     tmp1 = Sistema(arg);

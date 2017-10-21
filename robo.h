@@ -4,14 +4,15 @@
 #include "maq.h"
 
 typedef struct {
-    Maquina m;
+    Maquina *m;
     int x;
     int y;
-    short int cristais;
-    short int exercito;
+    short int c;
+    short int e;
 } Robo;
 
-Robo *cria_robo(INSTR *p, int x, int y);
+Robo *cria_robo(INSTR *p, short int e, int x, int y);
 void troca_prog(Robo *r, INSTR *p);
+void destroi_robo(Robo *r);
 
 #endif

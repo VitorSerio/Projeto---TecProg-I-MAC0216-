@@ -2,13 +2,17 @@
 #define EXERCITO_H
 
 #include "robo.h"
+#include "base.h"
 
 #define MAXVM 5
 
 typedef struct {
-    Robo robos[MAXVM];
+    Robo *robos[MAXVM];
+    Base b;
+    short int e;
 } Exercito;
 
-Exercito *cria_exercito(int t, int x, int y);
+Exercito *cria_exercito(INSTR *progs[], short int e, int x, int y);
+void destroi_exercito(Exercito *e);
 
 #endif

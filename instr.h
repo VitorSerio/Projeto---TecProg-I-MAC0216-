@@ -34,7 +34,7 @@ typedef enum {
     ALC,
     FRE,
     ATR,
-    SIS
+    SYS
 } OpCode;
 
 /* Instrução */

@@ -21,6 +21,6 @@ typedef struct {
     } val;
 } OPERANDO;
 
-char* toString(OPERANDO op);
+char *toString(OPERANDO op);
 
 #endif
