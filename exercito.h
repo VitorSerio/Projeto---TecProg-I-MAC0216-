@@ -7,10 +7,11 @@
 #define MAXVM 5
 
 typedef struct {
-    Robo **robos;
+    Robo **robos[MAXVM];
     Base b;
     short int size;
     short int e;
+    short int qntRobos;
 } Exercito;
 
 Exercito *cria_exercito(INSTR **progs, short int e, int x, int y);

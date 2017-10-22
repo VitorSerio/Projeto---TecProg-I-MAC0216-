@@ -5,6 +5,7 @@
 
 #define MAX_CRYSTAL 10
 #define MAX_EXERCITOS 6
+#define COMANDOS_EXECUTADOS 10
 
 typedef struct {
 	int exercitosCount;

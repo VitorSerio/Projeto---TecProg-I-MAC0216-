@@ -56,7 +56,20 @@ Celula createCell(Terreno terreno){
     return (Celula) {.cristais = rand() % (MAX_CRYSTAL + 1), .ocupado = 0, .terreno = terreno};
 }
 
-void Atualiza(){
+void Atualiza(Arena arena){
+
+    for(int i = 0; i < arena.exercitosCount; i++){
+
+        int qntRobos = arena.exercitos[i].qntRobos;
+
+        for(int j = 0; j < qntRobos; j++){
+            Robo *r = arena.exercitos[i].robos[j];
+
+            roda_robo(r, COMANDOS_EXECUTADOS);
+        }
+    }
+
+    arena.tempo++;
 
 }
 
