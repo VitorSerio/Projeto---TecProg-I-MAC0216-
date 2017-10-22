@@ -4,6 +4,7 @@
 #include "exercito.h"
 
 typedef struct {
+	int tamanho;
     Celula mapa[50][50];
     Exercito *exercitos[6];
     float tempo;
