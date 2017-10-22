@@ -4,8 +4,6 @@
 #include "maq.h"
 #include "arena.h"
 
-#define MAX_CRYSTAL 10
-
 static void Erro(char *msg) {
     fprintf(stderr,"%s\n", msg);
 }
@@ -19,8 +17,9 @@ Arena *cria_arena(int tamanho){
 
     Arena arena;
 
-    arena->tamanho = tamanho;
-    arena->tempo = 0;
+    arena.exercitosCount = 0;
+    arena.tamanho = tamanho;
+    arena.tempo = 0;
 
     srand(time(NULL));
 
@@ -30,19 +29,19 @@ Arena *cria_arena(int tamanho){
 
             switch (tr){
                 case 0:
-                    arena->mapa[i][j] = createCell(ESTRADA);
+                    arena.mapa[i][j] = createCell(ESTRADA);
                 break;
 
                 case 1:
-                    arena->mapa[i][j] = createCell(GRAMA);
+                    arena.mapa[i][j] = createCell(GRAMA);
                 break;
 
                 case 2:
-                    arena->mapa[i][j] = createCell(MONTANHA);
+                    arena.mapa[i][j] = createCell(MONTANHA);
                 break;
 
                 case 3:
-                    arena->mapa[i][j] = createCell(RIO);
+                    arena.mapa[i][j] = createCell(RIO);
                 break;
 
                 default:
@@ -61,12 +60,29 @@ void Atualiza(){
 
 }
 
-void InsereExercito(){
+void InsereExercito(Arena arena, INSTR **progs, short int e, int x, int y){
+    arena.exercitos[arena.exercitosCount] = *cria_exercito(INSTR **progs, short int e, int x, int y);
 
+    arena.exercitosCount++;
 }
 
-void RemoveExercito(){
+void RemoveExercito(Arena arena, Exercito *e){
 
+    int index;
+
+    for(int i = 0; i < arena.exercitosCount; i++){
+        Exercito ex = arena.exercitos[i];
+
+        if(ex.e == *e.e){
+            index = i;
+        }
+    }
+
+    for(int i = index; i < arena.exercitosCount - 1; i++){
+        arena.exercitos[i] = arena.exercitos[i+1];
+    }
+
+    arena.exercitosCount--;
 }
 
 OPERANDO Sistema(OPERANDO op) {

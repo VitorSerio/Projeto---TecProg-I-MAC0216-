@@ -3,10 +3,14 @@
 
 #include "exercito.h"
 
+#define MAX_CRYSTAL 10
+#define MAX_EXERCITOS 6
+
 typedef struct {
+	int exercitosCount;
 	int tamanho;
     Celula mapa[50][50];
-    Exercito *exercitos[6];
+    Exercito *exercitos[MAX_EXERCITOS];
     float tempo;
 } Arena;
 
