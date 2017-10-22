@@ -107,7 +107,6 @@ void exec_maquina(Maquina *m, int n) {
                     empilha(pil, tmp1);
                     break;
                 }
-                printf("Linha %d\n", ip);
                 Fatal("Erro: OPERANDO nao numerico", 4);
             case SUB:
                 tmp1 = desempilha(pil);
@@ -117,7 +116,6 @@ void exec_maquina(Maquina *m, int n) {
                     empilha(pil, tmp2);
                     break;
                 }
-                printf("Linha %d\n", ip);
                 Fatal("Erro: OPERANDO nao numerico", 4);
             case MUL:
                 tmp1 = desempilha(pil);
@@ -127,7 +125,6 @@ void exec_maquina(Maquina *m, int n) {
                     empilha(pil, tmp1);
                     break;
                 }
-                printf("Linha %d\n", ip);
                 Fatal("Erro: OPERANDO nao numerico", 4);
             case DIV:
                 tmp1 = desempilha(pil);
@@ -137,7 +134,6 @@ void exec_maquina(Maquina *m, int n) {
                     empilha(pil, tmp2);
                     break;
                 }
-                printf("Linha %d\n", ip);
                 Fatal("Erro: OPERANDO nao numerico", 4);
             case JMP:
                 ip = arg.val.n;
@@ -151,7 +147,6 @@ void exec_maquina(Maquina *m, int n) {
                     }
                     break;
                 }
-                printf("Linha %d\n", ip);
                 Fatal("Erro: OPERANDO nao numerico", 4);
             case JIF:
                 tmp1 = desempilha(pil);
@@ -162,7 +157,6 @@ void exec_maquina(Maquina *m, int n) {
                     }
                     break;
                 }
-                printf("Linha %d\n", ip);
                 Fatal("Erro: OPERANDO nao numerico", 4);
             case CALL:
                 tmp1.t = NUM;
@@ -183,7 +177,6 @@ void exec_maquina(Maquina *m, int n) {
             case RET:
                 // Recupera valor anterior do RBP.
                 if (rsp != rbp) {
-                    printf("Linha %d\n", ip);
                     Erro("Aviso: Espaco nao desalocado. Desalocacao forcada.");
                     rsp = rbp;
                 }
@@ -206,7 +199,6 @@ void exec_maquina(Maquina *m, int n) {
                     }
                     break;
                 }
-                printf("Linha %d\n", ip);
                 Fatal("Erro: OPERANDO nao numerico", 4);
             case GT:
                 tmp1 = desempilha(pil);
@@ -222,7 +214,6 @@ void exec_maquina(Maquina *m, int n) {
                     }
                     break;
                 }
-                printf("Linha %d\n", ip);
                 Fatal("Erro: OPERANDO nao numerico", 4);
             case GE:
                 tmp1 = desempilha(pil);
@@ -238,7 +229,6 @@ void exec_maquina(Maquina *m, int n) {
                     }
                     break;
                 }
-                printf("Linha %d\n", ip);
                 Fatal("Erro: OPERANDO nao numerico", 4);
             case LT:
                 tmp1 = desempilha(pil);
@@ -254,7 +244,6 @@ void exec_maquina(Maquina *m, int n) {
                     }
                     break;
                 }
-                printf("Linha %d\n", ip);
                 Fatal("Erro: OPERANDO nao numerico", 4);
             case LE:
                 tmp1 = desempilha(pil);
@@ -270,7 +259,6 @@ void exec_maquina(Maquina *m, int n) {
                     }
                     break;
                 }
-                printf("Linha %d\n", ip);
                 Fatal("Erro: OPERANDO nao numerico", 4);
             case NE:
                 tmp1 = desempilha(pil);
@@ -286,18 +274,15 @@ void exec_maquina(Maquina *m, int n) {
                     }
                     break;
                 }
-                printf("Linha %d\n", ip);
                 Fatal("Erro: OPERANDO nao numerico", 4);
             case STO:
                 if (arg.val.n < 0 || arg.val.n > MAXMEM) {
-                    printf("Linha %d\n", ip);
                     Fatal("Erro: Acesso fora dos limites da memoria", 4);
                 }
                 m->Mem[arg.val.n] = desempilha(pil);
                 break;
             case RCL:
                 if (arg.val.n < 0 || arg.val.n > MAXMEM) {
-                    printf("Linha %d\n", ip);
                     Fatal("Erro: Acesso fora dos limites da memoria", 4);
                 }
                 empilha(pil, m->Mem[arg.val.n]);
@@ -316,7 +301,6 @@ void exec_maquina(Maquina *m, int n) {
                 na posição dada */
                 tmp = arg.val.n + rbp;
                 if (tmp > rsp - 1 || arg.val.n < 0) {
-                    printf("Linha %d\n", ip);
                     Fatal("Erro: Posicao fora do limite do frame", 4);
                 }
                 exec->val[tmp] = desempilha(pil);
@@ -326,7 +310,6 @@ void exec_maquina(Maquina *m, int n) {
                 na posição dada, para a pilha de dados */
                 tmp = arg.val.n + rbp;
                 if (tmp > rsp - 1 || arg.val.n < 0) {
-                    printf("Linha %d\n", ip);
                     Fatal("Erro: Posicao fora do limite do frame", 4);
                 }
                 empilha(pil, exec->val[tmp]);
@@ -337,7 +320,6 @@ void exec_maquina(Maquina *m, int n) {
                 tamanho da pilha. */
                 tmp = rsp + arg.val.n;
                 if (tmp > PILMAX) {
-                    printf("Linha %d\n", ip);
                     Fatal("Erro: Alocacao fora do limite da pilha", 4);
                 }
                 rsp = tmp;
@@ -348,7 +330,6 @@ void exec_maquina(Maquina *m, int n) {
                 frame. */
                 tmp = rsp - arg.val.n;
                 if (tmp < rbp) {
-                    printf("Linha %d\n", ip);
                     Fatal("Erro: Desalocacao fora do limite do frame", 4);
                 }
                 rsp = tmp;
@@ -357,7 +338,6 @@ void exec_maquina(Maquina *m, int n) {
                 /*  */
                 tmp1 = desempilha(pil);
                 if (tmp1.t != CELULA) {
-                    printf("Linha %d\n", ip);
                     Fatal("Erro: Atributos só podem ser obtidos de celulas", 4);
                 }
                 tmp2.t = NUM;
@@ -372,7 +352,6 @@ void exec_maquina(Maquina *m, int n) {
                         tmp2.val.n = tmp1.val.cel.ocupado;
                         break;
                     default:
-                        printf("Linha %d\n", ip);
                         Fatal("Erro: Argumento ilegal para atributo", 4);
                 }
                 break;
@@ -383,10 +362,8 @@ void exec_maquina(Maquina *m, int n) {
                     if (tmp1.val.ac.t == GET) empilha(pil, tmp1);
                     break;
                 }
-                printf("Linha %d\n", ip);
                 Fatal("Erro: O sistema so pode ser chamado por uma acao", 4);
             default:
-                printf("Linha %d\n", ip);
                 Fatal("Erro: Instrucao nao definida", 4);
         }
         D(imprime(pil,5));

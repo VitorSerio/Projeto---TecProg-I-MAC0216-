@@ -2,6 +2,15 @@
 #include <stdlib.h>
 #include "operando.h"
 
+static void Erro(char *msg) {
+    fprintf(stderr,"%s\n", msg);
+}
+
+static void Fatal(char *msg, int cod) {
+    Erro(msg);
+    exit(cod);
+}
+
 static char *stringFromTerreno(Terreno t) {
     char * restrict strings[] = {
         "ESTRADA", "GRAMA", "MONTANHA", "RIO", "BASE"};
@@ -25,6 +34,7 @@ static char *stringFromDirecao(Direcao d) {
 char *toString(OPERANDO op) {
     int size = 50;
     char *res = (char*)malloc(size);
+    if (!res) Fatal("Memória insuficiente para char", 4);
 
     switch (op.t) {
         case NUM:
