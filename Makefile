@@ -18,7 +18,7 @@ pilha: pilha.o operando.o
 operando: operando.o
 	gcc -o $@ $^
 
-motor: arena.o maq.o pilha.o operando.o
+motor: motor.o arena.o maq.o pilha.o operando.o
 	gcc -o $@ $^
 
 motor.c: montador prog
