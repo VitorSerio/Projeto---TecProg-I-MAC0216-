@@ -52,8 +52,48 @@ Arena *cria_arena(int tamanho){
     return arena;
 }
 
-Arena *cria_arena(FILE *ifp){
+Arena *cria_arena(FILE *fp){
 
+    Arena arena;
+
+    fscanf(fp, "%d\n", &arena.tamanho);
+    fscanf(fp, "%d\n", &arena.tempo);
+
+    int exCount;
+    fscanf(fp, "%d\n", &exCount);
+
+    arena.exercitosCount = exCount;
+
+    for(int i = 0; i < exCount; i++){
+        for(int j = 0; j < exCount; j++){
+
+            int cr, oc, tr;
+
+            fscanf(fp, "%d,%d,%d\n", &cr, &oc, &tr);
+
+            switch (tr){
+                case 0:
+                    arena.mapa[i][j] = (Celula) {.cristais = cr, .ocupado = oc, .terreno = ESTRADA};
+                break;
+
+                case 1:
+                    arena.mapa[i][j] = (Celula) {.cristais = cr, .ocupado = oc, .terreno = GRAMA};
+                break;
+
+                case 2:
+                    arena.mapa[i][j] = (Celula) {.cristais = cr, .ocupado = oc, .terreno = MONTANHA};
+                break;
+
+                case 3:
+                    arena.mapa[i][j] = (Celula) {.cristais = cr, .ocupado = oc, .terreno = RIO};
+                break;
+
+                default:
+            }
+        }
+    }
+
+    fclose(fp);
 }
 
 Celula createCell(Terreno terreno){
