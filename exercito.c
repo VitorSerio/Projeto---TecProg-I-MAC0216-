@@ -26,8 +26,6 @@ Exercito *cria_exercito(INSTR **progs, short int e, int x, int y) {
     for (int i = 0; i < n; i++)
         ex->robos[i] = cria_robo(*(progs+i), e, x, y);
 
-    ex->qntRobos = n;
-
     return ex;
 }
 

@@ -11,7 +11,6 @@ typedef struct {
     Base b;
     short int size;
     short int e;
-    short int qntRobos;
 } Exercito;
 
 Exercito *cria_exercito(INSTR **progs, short int e, int x, int y);

@@ -52,6 +52,10 @@ Arena *cria_arena(int tamanho){
     return arena;
 }
 
+Arena *cria_arena(FILE *ifp){
+
+}
+
 Celula createCell(Terreno terreno){
     return (Celula) {.cristais = rand() % (MAX_CRYSTAL + 1), .ocupado = 0, .terreno = terreno};
 }
@@ -60,7 +64,7 @@ void Atualiza(Arena arena){
 
     for(int i = 0; i < arena.exercitosCount; i++){
 
-        int qntRobos = arena.exercitos[i].qntRobos;
+        int qntRobos = arena.exercitos[i].size;
 
         for(int j = 0; j < qntRobos; j++){
             Robo *r = arena.exercitos[i].robos[j];
