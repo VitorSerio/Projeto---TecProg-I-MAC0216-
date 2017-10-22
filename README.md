@@ -62,7 +62,7 @@ circular.
                     - *DEP*:
                         - Deposita um cristal.
                         - Valor: 4
-            - Acao:
+            - `Acao`:
                 - Tipo: `struct`
                 - Representa uma ação executada por um robô.
                 - Sempre necessita de chamadas ao sistema.
@@ -132,9 +132,9 @@ circular.
                         - Tipo: `Tipo`
                         - Representa o tipo do operando.
                     - `val`:
-                        - É uma `union`.
+                        - Tipo: `union`.
                         - Representa o valor do operando.
-                        - Pode ter os valores `n`, `ac` ou `cel`:
+                        - Pode ter os valores:
                             - `n`:
                                 - Tipo: `int`
                                 - Referente a inteiros literais (`t = NUM`).

@@ -4,7 +4,7 @@
 #include "maq.h"
 #include "arena.h"
 
-// #define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 #   define D(X) X
@@ -81,13 +81,12 @@ void exec_maquina(Maquina *m, int n) {
         OpCode   opc = prg[ip].instr;
         OPERANDO arg = prg[ip].op;
 
-        D(printf("%3d: %-4.4s %d\n     ", ip, CODES[opc], arg));
+        D(printf("%3d: %-4.4s %s\n     ", ip, CODES[opc], toString(arg)));
 
         switch (opc) {
             int tmp;
             OPERANDO tmp1;
             OPERANDO tmp2;
-            OPERANDO tmp3;
             char* str;
             case PUSH:
                 empilha(pil, arg);
@@ -197,13 +196,12 @@ void exec_maquina(Maquina *m, int n) {
                 tmp1 = desempilha(pil);
                 tmp2 = desempilha(pil);
                 if (tmp1.t == NUM && tmp2.t == NUM) {
-                    tmp3.t = NUM;
                     if (tmp1.val.n == tmp2.val.n) {
-                        tmp3.val.n = 1;
+                        tmp1.val.n = 1;
                         empilha(pil, tmp1);
                     }
                     else {
-                        tmp3.val.n = 0;
+                        tmp1.val.n = 0;
                         empilha(pil, tmp1);
                     }
                     break;
@@ -214,13 +212,12 @@ void exec_maquina(Maquina *m, int n) {
                 tmp1 = desempilha(pil);
                 tmp2 = desempilha(pil);
                 if (tmp1.t == NUM && tmp2.t == NUM) {
-                    tmp3.t = NUM;
                     if (tmp1.val.n < tmp2.val.n) {
-                        tmp3.val.n = 1;
+                        tmp1.val.n = 1;
                         empilha(pil, tmp1);
                     }
                     else {
-                        tmp3.val.n = 0;
+                        tmp1.val.n = 0;
                         empilha(pil, tmp1);
                     }
                     break;
@@ -231,13 +228,12 @@ void exec_maquina(Maquina *m, int n) {
                 tmp1 = desempilha(pil);
                 tmp2 = desempilha(pil);
                 if (tmp1.t == NUM && tmp2.t == NUM) {
-                    tmp3.t = NUM;
                     if (tmp1.val.n <= tmp2.val.n) {
-                        tmp3.val.n = 1;
+                        tmp1.val.n = 1;
                         empilha(pil, tmp1);
                     }
                     else {
-                        tmp3.val.n = 0;
+                        tmp1.val.n = 0;
                         empilha(pil, tmp1);
                     }
                     break;
@@ -248,13 +244,12 @@ void exec_maquina(Maquina *m, int n) {
                 tmp1 = desempilha(pil);
                 tmp2 = desempilha(pil);
                 if (tmp1.t == NUM && tmp2.t == NUM) {
-                    tmp3.t = NUM;
                     if (tmp1.val.n > tmp2.val.n) {
-                        tmp3.val.n = 1;
+                        tmp1.val.n = 1;
                         empilha(pil, tmp1);
                     }
                     else {
-                        tmp3.val.n = 0;
+                        tmp1.val.n = 0;
                         empilha(pil, tmp1);
                     }
                     break;
@@ -265,13 +260,12 @@ void exec_maquina(Maquina *m, int n) {
                 tmp1 = desempilha(pil);
                 tmp2 = desempilha(pil);
                 if (tmp1.t == NUM && tmp2.t == NUM) {
-                    tmp3.t = NUM;
                     if (tmp1.val.n >= tmp2.val.n) {
-                        tmp3.val.n = 1;
+                        tmp1.val.n = 1;
                         empilha(pil, tmp1);
                     }
                     else {
-                        tmp3.val.n = 0;
+                        tmp1.val.n = 0;
                         empilha(pil, tmp1);
                     }
                     break;
@@ -282,13 +276,12 @@ void exec_maquina(Maquina *m, int n) {
                 tmp1 = desempilha(pil);
                 tmp2 = desempilha(pil);
                 if (tmp1.t == NUM && tmp2.t == NUM) {
-                    tmp3.t = NUM;
                     if (tmp1.val.n != tmp2.val.n) {
-                        tmp3.val.n = 1;
+                        tmp1.val.n = 1;
                         empilha(pil, tmp1);
                     }
                     else {
-                        tmp3.val.n = 0;
+                        tmp1.val.n = 0;
                         empilha(pil, tmp1);
                     }
                     break;
@@ -322,18 +315,20 @@ void exec_maquina(Maquina *m, int n) {
                 /* Adiciona o valor de uma variável local na pilha de execução
                 na posição dada */
                 tmp = arg.val.n + rbp;
-                if (tmp > rsp - 1 || arg.val.n < 0)
+                if (tmp > rsp - 1 || arg.val.n < 0) {
                     printf("Linha %d\n", ip);
                     Fatal("Erro: Posicao fora do limite do frame", 4);
+                }
                 exec->val[tmp] = desempilha(pil);
                 break;
             case RCE:
                 /* Empilha o valor de uma variável local da pilha de execução,
                 na posição dada, para a pilha de dados */
                 tmp = arg.val.n + rbp;
-                if (tmp > rsp - 1 || arg.val.n < 0)
+                if (tmp > rsp - 1 || arg.val.n < 0) {
                     printf("Linha %d\n", ip);
                     Fatal("Erro: Posicao fora do limite do frame", 4);
+                }
                 empilha(pil, exec->val[tmp]);
                 break;
             case ALC:
@@ -341,9 +336,10 @@ void exec_maquina(Maquina *m, int n) {
                 em um novo frame. Verifica se a alocação não ultrapassa o
                 tamanho da pilha. */
                 tmp = rsp + arg.val.n;
-                if (tmp > PILMAX)
+                if (tmp > PILMAX) {
                     printf("Linha %d\n", ip);
                     Fatal("Erro: Alocacao fora do limite da pilha", 4);
+                }
                 rsp = tmp;
                 break;
             case FRE:
@@ -351,9 +347,10 @@ void exec_maquina(Maquina *m, int n) {
                 atual. Verifica se a desalocação não excede o limite do
                 frame. */
                 tmp = rsp - arg.val.n;
-                if (tmp < rbp)
+                if (tmp < rbp) {
                     printf("Linha %d\n", ip);
                     Fatal("Erro: Desalocacao fora do limite do frame", 4);
+                }
                 rsp = tmp;
                 break;
             case ATR:
