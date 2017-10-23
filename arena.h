@@ -3,22 +3,23 @@
 
 #include "exercito.h"
 
+#define MAX_ARENA 39 // hexagonal de lado 20
 #define MAX_CRYSTAL 10
 #define MAX_EXERCITOS 6
-#define COMANDOS_EXECUTADOS 10
 
 typedef struct {
 	int exercitosCount;
 	int tamanho;
-    Celula mapa[50][50];
-    Exercito *exercitos[MAX_EXERCITOS];
-    float tempo;
+    Celula *mapa[MAX_ARENA][MAX_ARENA];
+    Exercito **exercitos;
+    int execucoes;
 } Arena;
 
-Arena *cria_arena();
-void Atualiza();
-void InsereExercito();
-void RemoveExercito();
-OPERANDO Sistema(OPERANDO op);
+Arena *cria_arena(int tamanho);
+Arena *cria_arena_file(FILE *fp);
+void Atualiza(Arena *arena);
+void InsereExercito(Arena *arena, INSTR **progs, int n, int x, int y);
+void RemoveExercito(Arena *arena, int pos);
+OPERANDO Sistema(Maquina *m, OPERANDO op);
 
 #endif

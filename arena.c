@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include "maq.h"
+#include "robo.h"
+#include "exercito.h"
 #include "arena.h"
 
 static void Erro(char *msg) {
@@ -13,38 +15,36 @@ static void Fatal(char *msg, int cod) {
     exit(cod);
 }
 
-Arena *cria_arena(int tamanho){
+static Celula *createCell(Terreno tr, short int cr, short int oc) {
+    Celula *cel = (Celula*)malloc(sizeof(Celula));
+    cel->terreno = tr;
+    cel->cristais = cr;
+    cel->ocupado = oc;
+    return cel;
+}
 
-    Arena arena;
+Arena *cria_arena(int tamanho) {
+    Arena *arena = (Arena*)malloc(sizeof(Arena));
 
-    arena.exercitosCount = 0;
-    arena.tamanho = tamanho;
-    arena.tempo = 0;
+    arena->exercitosCount = 0;
+    arena->tamanho = tamanho;
+    arena->execucoes = 0;
+    arena->exercitos = (Exercito**)malloc(MAX_EXERCITOS * sizeof(Exercito));
 
-    srand(time(NULL));
+    for (int i = 0; i < MAX_EXERCITOS; i++)
+        arena->exercitos[i] = NULL;
 
-    for(int i = 0; i < tamanho; i++){
-        for(int j = 0; j < tamanho; j++){
-            int tr = rand() % 4;
-
-            switch (tr){
-                case 0:
-                    arena.mapa[i][j] = createCell(ESTRADA);
-                break;
-
-                case 1:
-                    arena.mapa[i][j] = createCell(GRAMA);
-                break;
-
-                case 2:
-                    arena.mapa[i][j] = createCell(MONTANHA);
-                break;
-
-                case 3:
-                    arena.mapa[i][j] = createCell(RIO);
-                break;
-
-                default:
+    for(int i = 0; i < tamanho; i++) {
+        for(int j = 0; j < tamanho; j++) {
+            int ht = tamanho / 2;
+            int sum = i + j;
+            // Deixa algumas células vazias, para simular um grid hexagonal
+            if (sum < ht) arena->mapa[i][j] = NULL;
+            else if (sum >= tamanho + ht) arena->mapa[i][j] = NULL;
+            else {
+                int tr = rand() % 4;
+                short int cr = rand() % (MAX_CRYSTAL + 1);
+                arena->mapa[i][j] = createCell(tr, cr, 0);
             }
         }
     }
@@ -52,115 +52,117 @@ Arena *cria_arena(int tamanho){
     return arena;
 }
 
-Arena *cria_arena(FILE *fp){
+Arena *cria_arena_file(FILE *fp) {
+    Arena *arena = (Arena*)malloc(sizeof(Arena));
 
-    Arena arena;
+    fscanf(fp, "%d\n", &arena->tamanho);
+    arena->execucoes = 0;
+    arena->exercitosCount = 0;
+    arena->exercitos = (Exercito**)malloc(MAX_EXERCITOS * sizeof(Exercito*));
 
-    fscanf(fp, "%d\n", &arena.tamanho);
-    fscanf(fp, "%d\n", &arena.tempo);
+    for (int i = 0; i < MAX_EXERCITOS; i++)
+        arena->exercitos[i] = NULL;
 
-    int exCount;
-    fscanf(fp, "%d\n", &exCount);
-
-    arena.exercitosCount = exCount;
-
-    for(int i = 0; i < exCount; i++){
-        for(int j = 0; j < exCount; j++){
-
+    for(int i = 0; i < arena->tamanho; i++){
+        for(int j = 0; j < arena->tamanho; j++){
             int cr, oc, tr;
-
             fscanf(fp, "%d,%d,%d\n", &cr, &oc, &tr);
-
-            switch (tr){
-                case 0:
-                    arena.mapa[i][j] = (Celula) {.cristais = cr, .ocupado = oc, .terreno = ESTRADA};
-                break;
-
-                case 1:
-                    arena.mapa[i][j] = (Celula) {.cristais = cr, .ocupado = oc, .terreno = GRAMA};
-                break;
-
-                case 2:
-                    arena.mapa[i][j] = (Celula) {.cristais = cr, .ocupado = oc, .terreno = MONTANHA};
-                break;
-
-                case 3:
-                    arena.mapa[i][j] = (Celula) {.cristais = cr, .ocupado = oc, .terreno = RIO};
-                break;
-
-                default:
-            }
+            arena->mapa[i][j] = createCell(tr, cr, oc);
         }
     }
 
     fclose(fp);
 }
 
-Celula createCell(Terreno terreno){
-    return (Celula) {.cristais = rand() % (MAX_CRYSTAL + 1), .ocupado = 0, .terreno = terreno};
-}
-
-void Atualiza(Arena arena){
-
-    for(int i = 0; i < arena.exercitosCount; i++){
-
-        int qntRobos = arena.exercitos[i].size;
-
-        for(int j = 0; j < qntRobos; j++){
-            Robo *r = arena.exercitos[i].robos[j];
-
-            roda_robo(r, COMANDOS_EXECUTADOS);
-        }
+void Atualiza(Arena *arena) {
+    for(int i = 0; i < MAX_EXERCITOS; i++) {
+        Exercito *e = arena->exercitos[i];
+        if (e)
+            for(int j = 0; j < MAXVM; j++) {
+                Robo *r = e->robos[j];
+                if (r) roda_robo(r, 50);
+                arena->execucoes++;
+            }
     }
-
-    arena.tempo++;
-
 }
 
-void InsereExercito(Arena arena, INSTR **progs, short int e, int x, int y){
-    arena.exercitos[arena.exercitosCount] = *cria_exercito(INSTR **progs, short int e, int x, int y);
-
-    arena.exercitosCount++;
-}
-
-void RemoveExercito(Arena arena, Exercito *e){
-
-    int index;
-
-    for(int i = 0; i < arena.exercitosCount; i++){
-        Exercito ex = arena.exercitos[i];
-
-        if(ex.e == *e.e){
-            index = i;
-        }
+void InsereExercito(Arena *arena, INSTR **progs, int n, int x, int y) {
+    if (arena->exercitosCount + 1 > MAXVM) {
+        Erro("Aviso: Não é possível adicionar mais exércitos à arena.");
+        return;
     }
-
-    for(int i = index; i < arena.exercitosCount - 1; i++){
-        arena.exercitos[i] = arena.exercitos[i+1];
+    int i = 0;
+    while (i < MAX_EXERCITOS) {
+        if (!arena->exercitos[i]) break;
+        i++;
     }
-
-    arena.exercitosCount--;
+    arena->exercitos[i] = cria_exercito(progs, n, i, x, y);
+    arena->exercitos[i]->a = arena;
+    arena->exercitosCount++;
 }
 
-OPERANDO Sistema(OPERANDO op) {
+void RemoveExercito(Arena *arena, int pos){
+    if (!arena->exercitos[pos]) {
+        Erro("Aviso: Não há robôs na posição dada.");
+        return;
+    }
+    destroi_exercito(arena->exercitos[pos]);
+    arena->exercitos[pos] = NULL;
+    arena->exercitosCount--;
+}
+
+OPERANDO Sistema(Maquina *m, OPERANDO op) {
     Acao ac = op.val.ac;
+    Robo *r = m->r;
+    //Arena *a = m->r->e->a;
     switch (ac.t) {
-        OPERANDO cel;
+        Celula cel;
+        int dx;
+        int dy;
+        switch (ac.d) {
+            case A1:
+                dx = 1;
+                dy = 0;
+                break;
+            case A2:
+                dx = 0;
+                dy = 1;
+                break;
+            case A3:
+                dx = 1;
+                dy = -1;
+                break;
+            case A1_:
+                dx = -1;
+                dy = 0;
+                break;
+            case A2_:
+                dx = 0;
+                dy = -1;
+                break;
+            case A3_:
+                dx = -1;
+                dy = 1;
+                break;
+        }
         case MOV:
+            r->x += dx;
+            r->y += dy;
             break;
         case ATK:
             break;
         case GET:
-            return cel;
+            //cel = *a->mapa[r->x + dx][r->y + dy];
+            //return (OPERANDO) {.t = CELULA, .val.cel = cel};
+            break;
         case PEG:
+            //a->mapa[r->x + dx][r->y + dy]->cristais--;
+            //r->c++;
             break;
         case DEP:
+            //a->mapa[r->x + dx][r->y + dy]->cristais++;
+            //r->c--;
             break;
     }
     return op;
 }
-
-// int main(int argc, char const *argv[]) {
-//     /* code */
-//     return 0;
-// }
