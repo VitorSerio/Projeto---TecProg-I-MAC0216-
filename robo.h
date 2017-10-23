@@ -3,15 +3,18 @@
 
 #include "maq.h"
 
+struct Exercito;
+
 typedef struct {
     Maquina *m;
     int x;
     int y;
     short int c;
-    short int e;
+    short int id;
+    struct Exercito *e;
 } Robo;
 
-Robo *cria_robo(INSTR *p, short int e, int x, int y);
+Robo *cria_robo(INSTR *p, int x, int y);
 void destroi_robo(Robo *r);
 void roda_robo(Robo *r, int n);
 void troca_prog(Robo *r, INSTR *p);

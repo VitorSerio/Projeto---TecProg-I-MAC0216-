@@ -1,28 +1,9 @@
-all: arena
-
-arena: arena.o exercito.o robo.o maq.o pilha.o operando.o
+testes: main.o arena.o exercito.o robo.o maq.o pilha.o operando.o
 	gcc -o $@ $^
 
-exercito: arena.o exercito.o robo.o maq.o pilha.o operando.o
-	gcc -o $@ $^
-
-robo: arena.o robo.o maq.o pilha.o operando.o
-	gcc -o $@ $^
-
-maq: arena.o maq.o pilha.o operando.o
-	gcc -o $@ $^
-
-pilha: pilha.o operando.o
-	gcc -o $@ $^
-
-operando: operando.o
-	gcc -o $@ $^
-
-motor: motor.o arena.o maq.o pilha.o operando.o
-	gcc -o $@ $^
-
-motor.c: montador prog
-	python3.6 montador < prog > motor.c
+motor: montador.py prog arena.o exercito.o robo.o maq.o pilha.o operando.o
+	python3.6 montador.py < prog > motor.c
+	gcc -o motor motor.c arena.o exercito.o robo.o maq.o pilha.o operando.o
 
 clean:
-	rm -f arena exercito robo maq pilha operando motor *.o
+	rm -f testes motor* *.o

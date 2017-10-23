@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "pilha.h"
 #include "maq.h"
+#include "robo.h"
 #include "arena.h"
 
 //#define DEBUG
@@ -64,6 +65,7 @@ Maquina *cria_maquina(INSTR *p) {
 
 void destroi_maquina(Maquina *m) {
     free(m);
+    m = NULL;
 }
 
 /* Alguns macros para facilitar a leitura do código */
@@ -358,7 +360,7 @@ void exec_maquina(Maquina *m, int n) {
             case SYS:
                 /*  */
                 if (arg.t == ACAO) {
-                    tmp1 = Sistema(arg);
+                    tmp1 = Sistema(m, arg);
                     if (tmp1.val.ac.t == GET) empilha(pil, tmp1);
                     break;
                 }

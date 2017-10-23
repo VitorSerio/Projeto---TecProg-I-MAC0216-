@@ -54,29 +54,3 @@ char *toString(OPERANDO op) {
 
     return res;
 }
-
-// int main() {
-//     OPERANDO op[] = {
-//         {.t = NUM, .val.n = 5},
-//         {.t = ACAO, .val.ac = {.t = MOV, .d = A1}},
-//         {.t = ACAO, .val.ac = {.t = ATK, .d = A2}},
-//         {.t = ACAO, .val.ac = {.t = GET, .d = A3}},
-//         {.t = ACAO, .val.ac = {.t = PEG, .d = A1_}},
-//         {.t = ACAO, .val.ac = {.t = DEP, .d = A2_}},
-//         {.t = ACAO, .val.ac = {.t = MOV, .d = A3_}},
-//         {.t = CELULA, .val.cel = {.terreno = ESTRADA, .cristais = 0, .ocupado = 0}},
-//         {.t = CELULA, .val.cel = {.terreno = GRAMA, .cristais = 3, .ocupado = 1}},
-//         {.t = CELULA, .val.cel = {.terreno = MONTANHA, .cristais = 8, .ocupado = 0}},
-//         {.t = CELULA, .val.cel = {.terreno = RIO, .cristais = 0, .ocupado = 0}},
-//         {.t = CELULA, .val.cel = {.terreno = BASE, .cristais = 5, .ocupado = 1}},
-//     };
-//
-//     int n = sizeof(op) / sizeof(OPERANDO);
-//     for (int i = 0; i < n; i++) {
-//         char *str = toString(op[i]);
-//         printf("%s\n", str);
-//         free(str);
-//     }
-//
-//     return 0;
-// }

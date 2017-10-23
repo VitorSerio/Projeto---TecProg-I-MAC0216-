@@ -5,7 +5,8 @@ maq
 robo
 exercito
 arena
-prog*
+testes
+prog.*
 motor*
 fibo*
 *.zip
