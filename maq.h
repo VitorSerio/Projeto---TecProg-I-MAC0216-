@@ -5,11 +5,9 @@
 
 #define MAXMEM 99
 
-struct Robo;
-
-typedef struct {
-    Pilha pil;
-    Pilha exec;
+typedef struct Maquina {
+    Pilha *pil;
+    Pilha *exec;
     OPERANDO Mem[MAXMEM+1];
     INSTR *prog;
     int rbp;

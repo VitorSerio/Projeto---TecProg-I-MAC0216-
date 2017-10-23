@@ -4,19 +4,17 @@
 #include "robo.h"
 #include "base.h"
 
-#define MAXVM 6
+#define MAX_ROBO 6
 
-struct Arena;
-
-typedef struct {
+typedef struct Exercito {
     Robo **robos;
     Base b;
     short int size;
-    short int e;
+    short int id;
     struct Arena *a;
 } Exercito;
 
-Exercito *cria_exercito(INSTR **progs, short int n, short int e, int x, int y);
+Exercito *cria_exercito(int x, int y);
 void destroi_exercito(Exercito *e);
 void adiciona_robo(Exercito *e, INSTR *p);
 void remove_robo(Exercito *e, int pos);

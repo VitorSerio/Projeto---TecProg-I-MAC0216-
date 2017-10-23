@@ -34,8 +34,6 @@ void troca_prog(Robo *r, INSTR *p) {
     destroi_maquina(r->m);
     r->m = cria_maquina(p);
     r->m->r = r;
-    r->m->pil.topo = 0;
-    r->m->exec.topo = 0;
 }
 
 void roda_robo(Robo *r, int n) {

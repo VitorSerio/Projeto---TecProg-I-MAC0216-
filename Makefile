@@ -1,11 +1,16 @@
 prog?=prog
+src = $(wildcard *.c)
+obj = $(src:.c=.o)
 
-testes: main.o arena.o exercito.o robo.o maq.o pilha.o operando.o
-	gcc -o $@ $^
+testes: $(obj)
+	gcc -o $@ $(obj)
 
-motor: montador.py $(prog) arena.o exercito.o robo.o maq.o pilha.o operando.o
+motor: montador.py motor.c $(obj)
+	gcc -o $@ motor.c $(obj)
+	rm -f motor.c
+
+motor.c: montador.py
 	python3.6 montador.py < $(prog) > motor.c
-	gcc -o motor motor.c arena.o exercito.o robo.o maq.o pilha.o operando.o
 
 clean:
 	rm -f testes motor* *.o

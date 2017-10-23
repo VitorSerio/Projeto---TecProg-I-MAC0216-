@@ -20,6 +20,7 @@ Pilha* cria_pilha() {
 
 void destroi_pilha(Pilha* p) {
     free(p);
+    p = NULL;
 }
 
 void empilha(Pilha* p, OPERANDO op) {
@@ -39,7 +40,7 @@ void imprime(Pilha* p, int n) {
     int i;
     char *str;
     for (i = t; i >= 0 && i > p->topo-n; i--) {
-        str = toString((p->val[i]));
+        str = toString_operando((p->val[i]));
         printf("%s\n", str);
         free(str);
     }

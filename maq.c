@@ -57,6 +57,8 @@ static void Fatal(char *msg, int cod) {
 Maquina *cria_maquina(INSTR *p) {
     Maquina *m = (Maquina*)malloc(sizeof(Maquina));
     if (!m) Fatal("Memória insuficiente",4);
+    m->pil = cria_pilha();
+    m->exec = cria_pilha();
     m->ip = 0;
     m->rbp = 0;
     m->prog = p;
@@ -64,14 +66,16 @@ Maquina *cria_maquina(INSTR *p) {
 }
 
 void destroi_maquina(Maquina *m) {
+    destroi_pilha(m->pil);
+    destroi_pilha(m->exec);
     free(m);
     m = NULL;
 }
 
 /* Alguns macros para facilitar a leitura do código */
 #define ip (m->ip)
-#define pil (&m->pil)
-#define exec (&m->exec)
+#define pil (m->pil)
+#define exec (m->exec)
 #define prg (m->prog)
 #define rbp (m->rbp)
 #define rsp (exec->topo)
@@ -292,7 +296,7 @@ void exec_maquina(Maquina *m, int n) {
             case END:
                 return;
             case PRN:
-                str = toString(desempilha(pil));
+                str = toString_operando(desempilha(pil));
                 printf("%s\n", str);
                 free(str);
                 break;
@@ -345,13 +349,13 @@ void exec_maquina(Maquina *m, int n) {
                 tmp2.t = NUM;
                 switch (arg.val.n) {
                     case 1:
-                        tmp2.val.n = tmp1.val.cel.terreno;
+                        tmp2.val.n = tmp1.val.cel.t;
                         break;
                     case 2:
-                        tmp2.val.n = tmp1.val.cel.cristais;
+                        tmp2.val.n = tmp1.val.cel.c;
                         break;
                     case 3:
-                        tmp2.val.n = tmp1.val.cel.ocupado;
+                        tmp2.val.n = tmp1.val.cel.oc;
                         break;
                     default:
                         Fatal("Erro: Argumento ilegal para atributo", 4);
