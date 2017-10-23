@@ -21,9 +21,11 @@ typedef enum {
 } TipoAc;
 
 /* Ação */
-typedef struct {
+typedef struct Acao {
     TipoAc t;
     Direcao d;
 } Acao;
+
+char *toString_acao(Acao ac);
 
 #endif

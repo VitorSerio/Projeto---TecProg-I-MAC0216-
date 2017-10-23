@@ -13,32 +13,24 @@ static void Fatal(char *msg, int cod) {
     exit(cod);
 }
 
-Exercito *cria_exercito(INSTR **progs, short int n, short int e, int x,
-                        int y) {
-    Exercito *ex = (Exercito*)malloc(sizeof(Exercito));
-    if (!ex) Fatal("Erro: Memória insuficiente para Exercito",4);
-    ex->e = e;
-    ex->b = (Base) {.x = x, .y = y, .e = e};
+Exercito *cria_exercito(int x, int y) {
+    Exercito *e = (Exercito*)malloc(sizeof(Exercito));
+    if (!e) Fatal("Erro: Memória insuficiente para Exercito",4);
+    e->b.x = x;
+    e->b.y = y;
+    
+    e->robos = (Robo**)malloc(MAX_ROBO * sizeof(Robo*));
+    if (!e->robos) Fatal("Erro: Memória insuficiente para múltiplos Robo*",4);
+    for (int i = 0; i < MAX_ROBO; i++) e->robos[i] = NULL;
 
-    if (n > MAXVM) {
-        Erro("Aviso: Foram dados mais programas que o limite permitido. Apenas os primeiros serão usados.");
-        n = MAXVM;
-    }
-    ex->robos = (Robo**)malloc(MAXVM * sizeof(Robo*));
-
-    for (int i = 0; i < MAXVM; i++) ex->robos[i] = NULL;
-
-    for (int i = 0; i < n; i++) adiciona_robo(ex, progs[i]);
-
-    return ex;
+    return e;
 }
 
 void destroi_exercito(Exercito *e) {
-    for (int i = 0; i < MAXVM; i++) {
+    for (int i = 0; i < MAX_ROBO; i++) {
         if (!e->robos[i])
             continue;
         destroi_robo(e->robos[i]);
-        e->robos[i] = NULL;
         e->size--;
     }
     free(e->robos);
@@ -48,7 +40,7 @@ void destroi_exercito(Exercito *e) {
 }
 
 void adiciona_robo(Exercito *e, INSTR *p) {
-    if (e->size + 1 > MAXVM) {
+    if (e->size + 1 > MAX_ROBO) {
         Erro("Aviso: Não é possível adicionar mais robôs ao exército.");
         return;
     }
@@ -56,20 +48,14 @@ void adiciona_robo(Exercito *e, INSTR *p) {
     short int dy[] = {0, 1, -1, 0, -1, 1};
 
     int i = 0;
-    while (i < MAXVM) {
+    while (i < MAX_ROBO) {
         if (!e->robos[i]) break;
-        printf("loop %d\n", i);
         i++;
     }
-    printf("fim loop %d\n", i);
     e->robos[i] = cria_robo(p, e->b.x + dx[i], e->b.y + dy[i]);
-    printf("cria\n");
     e->robos[i]->e = e;
-    printf("e->\n");
     e->robos[i]->id = i;
-    printf("id->\n");
     e->size++;
-    printf("size = %d\n", e->size);
 }
 
 void remove_robo(Exercito *e, int pos) {

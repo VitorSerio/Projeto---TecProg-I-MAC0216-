@@ -3,9 +3,7 @@
 
 #include "maq.h"
 
-struct Exercito;
-
-typedef struct {
+typedef struct Robo {
     Maquina *m;
     int x;
     int y;

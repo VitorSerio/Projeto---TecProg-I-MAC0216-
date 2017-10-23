@@ -38,7 +38,7 @@ typedef enum {
 } OpCode;
 
 /* Instrução */
-typedef struct {
+typedef struct INSTR {
     OpCode instr;
     OPERANDO op;
 } INSTR;

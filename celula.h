@@ -11,10 +11,14 @@ typedef enum {
 } Terreno;
 
 /* Célula */
-typedef struct {
-    Terreno terreno;
-    short int cristais;
-    short int ocupado;
+typedef struct Celula {
+    Terreno t;
+    short int c;
+    short int oc;
 } Celula;
+
+Celula *cria_celula(Terreno tr, short int cr, short int oc);
+void destroi_celula(Celula *cel);
+char *toString_celula(Celula cel);
 
 #endif

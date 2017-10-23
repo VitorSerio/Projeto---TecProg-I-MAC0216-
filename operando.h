@@ -12,7 +12,7 @@ typedef enum {
 } Tipo;
 
 /* Operando */
-typedef struct {
+typedef struct OPERANDO {
     Tipo t;
     union {
         int n;
@@ -21,6 +21,6 @@ typedef struct {
     } val;
 } OPERANDO;
 
-char *toString(OPERANDO op);
+char *toString_operando(OPERANDO op);
 
 #endif

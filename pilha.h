@@ -5,7 +5,7 @@
 
 #define PILMAX 99
 
-typedef struct {
+typedef struct Pilha {
     int topo;
     OPERANDO val[PILMAX+1];
 } Pilha;

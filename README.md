@@ -13,14 +13,6 @@ Data: 22/10/2017
 ### FASE 2
 Data: 22/10/2017
 
-**FICOU FALTANDO**
-- Testar funções em **arena.c**.
-- Descobrir porque algumas funções em **exercito.c** estão dando 'Segmentation
-fault'.
-- Vamos continuar trabalhando nesses problemas, por enquanto.
-- Repositório no GitHub [aqui](https://github.com/VitorSerio/Projeto---TecProg-I-MAC0216-/tree/master)
-
-
 **NOVIDADES**:
 
 - Todos os arquivos **.h** receberam *inclusion guards*, para usar dependência
@@ -30,7 +22,7 @@ circular.
     - Regra *default*:
         - Execução: `make` ou `make testes`.
         - Requer: **main.o**, **arena.o**, **exercito.o**, **robo.o**,
-        **maq.o**, **pilha.o** e **operando.o**.
+        **maq.o**, **pilha.o**, **operando.o** e **celula.o**.
         - Cria o arquivo:
             - **testes**:
                 - Tipo: executável
@@ -44,12 +36,16 @@ circular.
                         - Executa testes nas funções em **robo.c**.
                     - `./testes -o`:
                         - Executa testes nas funções em **operando.c**.
+                    - `./testes -c`:
+                        - Executa testes nas funções em **celula.c**.
     - Outras regras:
         - `make motor` ou `make motor prog=nome_do_programa_em_Assembly`:
-            - Requer: **montador.py**, **$(prog)**, **exercito.o**, **robo.o**,
+            - Requer: **montador.py**, **exercito.o**, **robo.o**,
             **maq.o**, **pilha.o** e **operando.o**.
-            - **$(prog)** é uma variável que assume o valor do programa em
-            Assembly. Seu valor padrão é simplesmente 'prog'.
+            - `prog` é uma variável que assume o valor do programa em
+            Assembly. Seu valor padrão é simplesmente 'prog'. Então, para rodar
+            com `make motor` é necessário que haja um programa em Assembly
+            chamado **prog**.
             - Para criar **motor** diversas vezes somente mudando o programa em
             Assembly usado é necessário usar `make clean`, antes de gerar o
             novo **motor**.
@@ -292,7 +288,7 @@ circular.
                         - Representa a qual exército a base pertence.
 
     - **exercito.h**:
-        - Define *MAXVM*, que representa a quantidade máxima de robôs por
+        - Define *MAX_ROBO*, que representa a quantidade máxima de robôs por
         exército.
         - Define:
             - `Exercito`:
