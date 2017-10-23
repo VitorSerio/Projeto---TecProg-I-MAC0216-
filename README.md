@@ -13,6 +13,14 @@ Data: 22/10/2017
 ### FASE 2
 Data: 22/10/2017
 
+**FICOU FALTANDO**
+- Testar funções em **arena.c**.
+- Descobrir porque algumas funções em **exercito.c** estão dando 'Segmentation
+fault'.
+- Vamos continuar trabalhando nesses problemas, por enquanto.
+- Repositório no GitHub [aqui](https://github.com/VitorSerio/Projeto---TecProg-I-MAC0216-/tree/master)
+
+
 **NOVIDADES**:
 
 - Todos os arquivos **.h** receberam *inclusion guards*, para usar dependência
@@ -37,9 +45,14 @@ circular.
                     - `./testes -o`:
                         - Executa testes nas funções em **operando.c**.
     - Outras regras:
-        - `make motor`:
-            - Requer: **montador.py**, **prog**, **exercito.o**, **robo.o**,
+        - `make motor` ou `make motor prog=nome_do_programa_em_Assembly`:
+            - Requer: **montador.py**, **$(prog)**, **exercito.o**, **robo.o**,
             **maq.o**, **pilha.o** e **operando.o**.
+            - **$(prog)** é uma variável que assume o valor do programa em
+            Assembly. Seu valor padrão é simplesmente 'prog'.
+            - Para criar **motor** diversas vezes somente mudando o programa em
+            Assembly usado é necessário usar `make clean`, antes de gerar o
+            novo **motor**.
             - Cria o arquivo:
                 - **motor**:
                     - Tipo: Executável.
