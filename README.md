@@ -17,7 +17,7 @@ Data: 22/10/2017
 
 - Todos os arquivos **.h** receberam *inclusion guards*, para usar dependência
 circular.
-- Todos os arquivos **.c** reveberam implementações das funções `Erro` e `Fatal`
+- Todos os arquivos **.c** receberam implementações das funções `Erro` e `Fatal`
 para gerenciamento de erros.
 - Todas as funções que liberam espaço alocado para alguma `struct` agora também
 ajustam os valores apontados por seus ponteiros como `NULL`.

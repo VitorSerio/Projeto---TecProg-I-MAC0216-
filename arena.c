@@ -165,7 +165,7 @@ void InsereExercito(Arena *a, int x, int y) {
 }
 
 void RemoveExercito(Arena *a, int pos){
-    Exercito *e = a->exercitos[pos]
+    Exercito *e = a->exercitos[pos];
     if (!e) {
         Erro("Aviso: Não há robôs na posição dada.");
         return;
@@ -238,7 +238,7 @@ OPERANDO Sistema(Maquina *m, OPERANDO op) {
 void imprime_mapa(Arena *a) {
     int n = a->tamanho;
     for (int i = 0; i < n; i++) {
-        for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
             if (!a->mapa[i][j]) printf("NULL  ");
             else printf("%d,%d,%d ", a->mapa[i][j]->t, a->mapa[i][j]->c,
                         a->mapa[i][j]->oc);
