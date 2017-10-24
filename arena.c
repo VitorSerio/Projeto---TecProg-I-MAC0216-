@@ -54,7 +54,7 @@ Arena *cria_arena(int tam) {
             else {
                 int tr = rand() % 4;
                 short int cr = rand() % (MAX_CRYSTAL + 1);
-                a->mapa[i][j] = cria_celula(tr, cr, 0);
+                a->mapa[i][j] = cria_celula(tr, cr);
             }
         }
     }
@@ -102,9 +102,9 @@ Arena *cria_arena_file(FILE *fp) {
             if (sum < ht) a->mapa[i][j] = NULL;
             else if (sum >= tam + ht) a->mapa[i][j] = NULL;
             else {
-                int t, c, oc;
-                fscanf(fp, "%d,%d,%d\n", &t, &c, &oc);
-                a->mapa[i][j] = cria_celula(t, c, oc);
+                int t, c;
+                fscanf(fp, "%d,%d\n", &t, &c);
+                a->mapa[i][j] = cria_celula(t, c);
             }
         }
     }
@@ -160,15 +160,22 @@ void InsereExercito(Arena *a, int x, int y) {
     a->exercitos[i]->b.e = i;
     a->exercitos[i]->a = a;
     a->exercitosCount++;
+
+    a->mapa[x][y] = cria_celula(BASE, 0);
 }
 
 void RemoveExercito(Arena *a, int pos){
-    if (!a->exercitos[pos]) {
+    Exercito *e = a->exercitos[pos]
+    if (!e) {
         Erro("Aviso: Não há robôs na posição dada.");
         return;
     }
-    destroi_exercito(a->exercitos[pos]);
-    a->exercitos[pos] = NULL;
+    int x = e->b.x;
+    int y = e->b.y;
+    a->mapa[x][y] = cria_celula(ESTRADA, MAX_CRYSTAL);
+
+    destroi_exercito(e);
+    e = NULL;
     a->exercitosCount--;
 }
 
@@ -232,8 +239,8 @@ void imprime_mapa(Arena *a) {
     int n = a->tamanho;
     for (int i = 0; i < n; i++) {
         for (int i = 0; i < n; i++) {
-            if (!a->mapa[i][j]) printf("NUL ");
-            else printf("%d%d%d ", a->mapa[i][j]->t, a->mapa[i][j]->c,
+            if (!a->mapa[i][j]) printf("NULL  ");
+            else printf("%d,%d,%d ", a->mapa[i][j]->t, a->mapa[i][j]->c,
                         a->mapa[i][j]->oc);
         }
         printf("\n");

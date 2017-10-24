@@ -17,12 +17,16 @@ Data: 22/10/2017
 
 - Todos os arquivos **.h** receberam *inclusion guards*, para usar dependência
 circular.
+- Todos os arquivos **.c** reveberam implementações das funções `Erro` e `Fatal`
+para gerenciamento de erros.
+- Todas as funções que liberam espaço alocado para alguma `struct` agora também
+ajustam os valores apontados por seus ponteiros como `NULL`.
 
 - **Makefile**:
     - Regra *default*:
         - Execução: `make` ou `make testes`.
         - Requer: **main.o**, **arena.o**, **exercito.o**, **robo.o**,
-        **maq.o**, **pilha.o**, **operando.o** e **celula.o**.
+        **maq.o**, **pilha.o**, **operando.o**, **celula.o** e **acao.o**.
         - Cria o arquivo:
             - **testes**:
                 - Tipo: executável
@@ -36,27 +40,38 @@ circular.
                         - Executa testes nas funções em **robo.c**.
                     - `./testes -o`:
                         - Executa testes nas funções em **operando.c**.
-                    - `./testes -c`:
+                    - `./testes -ac`:
+                        - Executa testes nas funções em **acao.c**.
+                    - `./testes -cel`:
                         - Executa testes nas funções em **celula.c**.
     - Outras regras:
         - `make motor` ou `make motor prog=nome_do_programa_em_Assembly`:
-            - Requer: **montador.py**, **exercito.o**, **robo.o**,
-            **maq.o**, **pilha.o** e **operando.o**.
-            - `prog` é uma variável que assume o valor do programa em
-            Assembly. Seu valor padrão é simplesmente 'prog'. Então, para rodar
-            com `make motor` é necessário que haja um programa em Assembly
-            chamado **prog**.
+            - Requer: **montador.py**, **motor.c**, **arena.o**, **exercito.o**,
+            **robo.o**, **maq.o**, **pilha.o**, **operando.o**, **celula.o** e
+            **acao.o**.
+            - `prog` é uma variável que assume o nome do programa em Assembly.
+            Seu valor padrão é simplesmente 'prog'. Então, para rodar com `make
+            motor` é necessário que haja um programa em Assembly
+            chamado **prog** no mesmo diretório.
             - Para criar **motor** diversas vezes somente mudando o programa em
-            Assembly usado é necessário usar `make clean`, antes de gerar o
+            Assembly usado é necessário usar `make clean`, antes de gerar um
             novo **motor**.
             - Cria o arquivo:
                 - **motor**:
                     - Tipo: Executável.
-                    - Testa se o arquivo gerado por **montador** está
+                    - Testa se o arquivo gerado por **montador.py** está
                     funcionando.
                     - Acaba testando, por consequência, as instruções definidas
                     em **maq.c**.
                     - Execução: `./motor`
+        - `make motor.c`:
+            - Regra predominantemente auxiliar de `make motor`.
+            - Pode ser usado para verificar o funcionamento de **montador.py**.
+            - Cria o arquivo:
+                - **motor.c**:
+                    - Tipo: Source
+                    - Programa em C, gerado por **montador.py**, que simula o
+                    funcionamento de uma máquina.
         - `make clean`:
             - Remove todos os arquivos gerados pelas outras regras.
 
@@ -106,20 +121,37 @@ circular.
                     - *DEP*:
                         - Deposita um cristal.
                         - Valor: 4
-            - `Acao`:
+            - `Acao` e `struct Acao`:
                 - Tipo: `struct`
                 - Representa uma ação executada por um robô.
                 - Sempre necessita de chamadas ao sistema.
                 - Contém os valores:
-                    - `t`:
+                    - *t*:
                         - Tipo: `TipoAc`
                         - Representa o tipo da ação.
-                    - `d`:
+                    - *d*:
                         - Tipo: `Direcao`
                         - Representa a direção da ação.
+        - Declara a função:
+            - `toString_acao`:
+                - Retorna uma string que representa uma `Acao`.
+                - Recebe:
+                    - `Acao ac`:
+                        - `Acao` que será representada.
+                - Retorna:
+                    - `char*`
+                        - String que representa a `Acao`.
+    - **acao.c**:
+        - Implementa a função `toString_acao`.
+            - É importante observar que essa função aloca espaço na memória para
+            o ponteiro `char*`, precisando que essa memória seja liberada com a
+            função `free` eventualmente.
+        - Outras funções são auxiliares.
 
     - **celula.h**:
         - Define:
+            - *MAX_CRYSTAL*:
+                - A quantidade máxima de cristais por célula.
             - `Terreno`:
                 - Tipo: `enum`
                 - Representa o tipo de terreno em uma célula.
@@ -139,20 +171,53 @@ circular.
                     - *BASE*:
                         - Impede locomoção.
                         - Valor: 4
-            - `Celula`:
+            - `Celula` e `struct Celula`:
                 - Tipo: `struct`
                 - Representa os dados de uma célula do mapa.
                 - Contém os valores:
-                    - `terreno`:
+                    - *t*:
                         - Tipo: `Terreno`
                         - Representa qual o tipo de terreno da célula.
-                    - `cristais`:
+                    - *c*:
                         - Tipo: `short int`
-                        - Representa a quantidade de cristais presentes na célula.
-                    - `ocupado`:
+                        - Representa a quantidade de cristais presente na
+                        célula.
+                    - *oc*:
                         - Tipo: `short int`
                         - Representa se a célula já está ocupada por um robô.
                         - Vale 0, se não estiver ocupada e 1, se estiver.
+        - Declara as funções:
+            - `cria_celula`:
+                - Função construtora do tipo `Celula`.
+                - Recebe:
+                    - `Terreno t`:
+                        - O terreno da célula criada.
+                    - `short int c`:
+                        - A quantidade de cristais na célula criada.
+                - Retorna:
+                    - `Celula*` com os parâmetros dados e considerada como
+                    desocupada (`oc = 0`).
+            - `destroi_celula`:
+                - Libera a memória alocada para uma `Célula*`.
+                - Recebe:
+                    - `Celula *cel`:
+                        - `Celula*` para ser 'desfeita'.
+                - Não possui `return`.
+            - `toString_celula`:
+                - Retorna uma string que representa uma `Celula`.
+                - Recebe:
+                    - `Celula cel`
+                        - `Celula` que será representada.
+                - Retorna:
+                    - `char*`
+                        - String que representa a `Celula`.
+    - **celula.c**:
+        - Implementa as funções `cria_celula`, `destroi_celula` e
+        `toString_celula`.
+            - É importante observar que `toString_celula` aloca espaço na
+            memória para o ponteiro `char*`, precisando que essa memória seja
+            liberada com a função `free` eventualmente.
+        - Outras funções são auxiliares.
 
     - **operando.h**:
         - Define a:
@@ -169,23 +234,23 @@ circular.
                     - *CELULA*:
                         - Dados de uma célula.
                         - Valor: 2
-            - `OPERANDO`:
+            - `OPERANDO` e `struct OPERANDO`:
                 - Tipo: `struct`
                 - Contém os valores:
-                    - `t`:
+                    - *t*:
                         - Tipo: `Tipo`
                         - Representa o tipo do operando.
-                    - `val`:
+                    - *val*:
                         - Tipo: `union`.
                         - Representa o valor do operando.
                         - Pode ter os valores:
-                            - `n`:
+                            - *n*:
                                 - Tipo: `int`
                                 - Referente a inteiros literais (`t = NUM`).
-                            - `ac`:
+                            - *ac*:
                                 - Tipo: `Acao`
                                 - Referente a ações (`t = ACAO`).
-                            - `cel`:
+                            - *cel*:
                                 - Tipo: `Celula`
                                 - Referente a células (`t = CELULA`).
         - Declara a função:
@@ -197,15 +262,15 @@ circular.
                     - `char*`
 
     - **operando.c**:
-        - Implementa a função `toString`:
+        - Implementa a função `toString_operando`:
             - É importante observar que essa função aloca espaço na memória para
             o ponteiro `char*`, precisando que essa memória seja liberada com a
             função `free` eventualmente.
-        - As outras funções são puramente auxiliares de `toString`.
+        - Outras funções são auxiliares.
 
     - **robo.h**:
-        - Define a `struct` `Robo`:
-            - `Robo`:
+        - Define:
+            - `Robo` e `struct Robo`:
                 - Representa um robô de um exército.
                 - Contém os valores:
                     - *m*:
@@ -233,6 +298,8 @@ circular.
         - Declara as funções:
             - `cria_robo`:
                 - Função construtora do tipo `Robo`.
+                - A máquina do do robô criado tem seu ponteiro *r* ajustado para
+                o robô.
                 - Recebe:
                     - `INSTR *p`:
                         - Programa a ser executado pelo robô.
@@ -241,16 +308,18 @@ circular.
                     - `int y`:
                         - Atributo *y* do robô.
                 - Retorna:
-                    - `Robo*` com os atributos dados e uma `Maquina` com o
-                    programa dado.
+                    - `Robo*` com os atributos dados contendo uma `Maquina*` com
+                    o programa dado.
             - `destroi_robo`:
-                - Libera a memória alocada para um `Robo` e sua `Maquina`.
+                - Libera a memória alocada para um `Robo*` e sua `Maquina*`.
                 - Recebe:
                     - `Robo *r`:
-                        - `Robo` a ser 'desfeito'.
+                        - `Robo*` a ser 'desfeito'.
                 - Não possui `return`.
             - `torca_prog`:
                 - Troca o programa a ser executado por um robô.
+                - 'Desfaz' a máquina atual e cria uma nova, com o programa
+                dado.
                 - Recebe:
                     - `INSTR *p`:
                         - O novo programa a ser dado pro robô.
@@ -258,20 +327,21 @@ circular.
                         - O robô que receberá o novo programa.
                 - Não possui `return`.
             - `roda_robo`:
-                - Executa o programa de um robô.
+                - Executa uma determinada quantidade de instruções do programa
+                de um robô.
                 - Recebe:
                     - `Robo *r`:
                         - O robô cujo programa será executado.
                     - `int n`:
                         - Quantidade de instruções para ser executada.
+                - Não possui `return`.
     - **robo.c**:
         - Implementa as funções `cria_robo`, `destroi_robo`, `troca_prog` e
         `roda_robo`.
-        - Implementa as funções `Erro` e `Fatal`, para gerenciamento de erros.
 
     - **base.h**:
         - Define:
-            - `Base`:
+            - `Base` e `struct Base`:
                 - Tipo: `struct`
                 - Representa a base de um exército.
                 - Contém os valores:
@@ -288,10 +358,10 @@ circular.
                         - Representa a qual exército a base pertence.
 
     - **exercito.h**:
-        - Define *MAX_ROBO*, que representa a quantidade máxima de robôs por
-        exército.
         - Define:
-            - `Exercito`:
+            - *MAX_ROBO*:
+                - Quantidade máxima de robôs por exército.
+            - `Exercito` e `struct Exercito`:
                 - Tipo: `struct`
                 - Representa um exército (time) do jogo.
                 - Contém os seguintes valores:
@@ -304,9 +374,9 @@ circular.
                     - *size*:
                         - Tipo: `short int`
                         - Representa a quantidade de robôs ativos no exército.
-                    - *e*:
+                    - *id*:
                         - Tipo: `short int`
-                        - Identificação do exército.
+                        - Identificação do exército em uma arena.
                     - *a*:
                         - Tipo: `Arena*`
                         - Representa a arena que contém o `Exercito`.
@@ -314,39 +384,35 @@ circular.
             - `cria_exercito`:
                 - Função construtora do tipo `Exercito`.
                 - Recebe:
-                    - `INSTR **progs`:
-                        - Ponteiro com os programas de cada robô do exército.
-                        - O número de programas não deve exceder *MAXVM*.
-                    - `short int n`:
-                        - A quantidade de programas presentes em *progs*.
-                    - `short int e`:
-                        - Identificador do exército.
                     - `int x`:
                         - Posição horizontal da base do exército.
                     - `int y`:
                         - Posição vertical da base do exército.
-                - Gera aviso se forem dados mais programas que o limite.
                 - Retorna:
-                    - `Exercito*` com os atributos passados, `Robo*`s com os
-                    programas em `progs` e uma `Base`.
+                    - `Exercito*` com os atributos passados e o máximo de
+                    `Robo*`s inicializados como `NULL`.
             - `destroi_exercito`:
-                - Libera a memória alocada para um `Exercito` e seus `Robo`s.
+                - Libera a memória alocada para um `Exercito*` e seus `Robo*`s.
                 - Recebe:
                     - `Exercito *e`:
                         - `Exercito` a ser 'desfeito'.
                 - Não possui `return`.
             - `adiciona_robo`:
-                - Adiciona um robô ao `Exercito`, no primeiro espaço vazio
-                disponível de *robos*.
+                - Adiciona um robô a um exército, no primeiro espaço vazio
+                disponível em *robos*.
+                - O robô adicionado tem seu ponteiro *e* ajustado pro
+                exército que o está recebendo e seu valor *id* ajustado para
+                a posição em que ele está entrando em *robos*.
                 - Recebe:
                     - `Exercito *e`:
-                        - `Exercito` a ser modificado.
+                        - `Exercito` a ter um robô adicionado.
                     - `INSTR *p`:
                         - Programa do robô que será adicionado.
                 - Gera aviso se o limite de robôs já tiver sido atingido.
                 - Não possui `return`.
             - `remove_robo`:
-                - Remove um robô de um exército na posição dada.
+                - Remove um robô de um exército na posição dada, liberando a
+                memmória alocada para o mesmo.
                 - Recebe:
                     - `Exercito *e`:
                         - `Exercito` a ser modificado.
@@ -357,22 +423,25 @@ circular.
     - **exercito.c**:
         - Implementa as funções `cria_exercito`, `destroi_exercito`,
         `adiciona_robo` e `remove_robo`.
-        - Implementa as funções `Erro` e `Fatal`, para gerenciamento de erros.
 
     - **arena.h**:
-        - Define *MAX_ARENA*, *MAX_CRYSTAL* e *MAX_EXERCITOS*.
         - Define:
-            - `Arena`:
+            - *MAX_TAMANHO*:
+                - Tamanho máximo de um lado da matriz quadrada que representa
+                o grid hexadonal.
+            - *MAX_EXERCITOS*:
+                - Quantidade máxima de exércitos por arena.
+            - `Arena` e `struct Arena`:
                 - Tipo: `struct`
                 - Contém os seguintes valores:
                     - *exercitosCount*:
-                        - Tipo: `int`
+                        - Tipo: `short int`
                         - Quantidade de exércitos ativos na arena.
                     - *tamanho*:
                         - Tipo: `int`
                         - Tamanho da arena (matriz quadrada).
                     - *mapa*:
-                        - Tipo: `array` 2D de `Celula*`
+                        - Tipo: `Celula***`
                         - Representa o mapa da arena.
                     - *exercitos*:
                         - Tipo: `Exercito**`
@@ -382,16 +451,16 @@ circular.
                         programas (tempo).
         - Declara as funções:
             - `cria_arena`:
-                - Função contrutora do tipo arena.
+                - Função contrutora do tipo `Arena`.
                 - Gera uma arena aleatória com tamanho dado.
                 - Recebe:
-                    - `int tamanho`:
-                        - Tamanho da arena gerada.
+                    - `int tam`:
+                        - Tamanho do *mapa* da arena que será gerada.
                 - Retorna:
-                    - `Arena*` com o tamanho dado, mapa aleatório e sem
-                    exércitos ativos.
+                    - `Arena*` com o tamanho dado, mapa aleatório, sem exércitos
+                    ativos (todos são inicializados como `NULL`).
             - `cria_arena_file`:
-                - Função contrutora do tipo arena.
+                - Função contrutora do tipo `Arena`.
                 - Gera uma arena a partir de um arquivo.
                 - Recebe:
                     - `FILE *fp`:
@@ -399,10 +468,17 @@ circular.
                 - Retorna:
                     - `Arena*` com tamanho e mapa dados pelo arquivo e sem
                     exércitos ativos.
+            - `destroi_arena`:
+                - Libera a memória alocada de uma `Arena*` e todos os outros
+                `struct`s contidos na mesma.
+                - Recebe:
+                    - `Arena *a`:
+                        - `Arena` que será 'desfeita'.
+                - Não possui `return`.
             - `Atualiza`:
                 - Faz com que cada robô, de cada exército, execute uma mesma
                 quantidade de instruções, por vez.
-                - Atualiza o valor de `execucoes` para cada robô que executou o
+                - Atualiza o valor de *execucoes* para cada robô que executou o
                 seu programa.
                 - Recebe:
                     - `Arena *arena`:
@@ -411,13 +487,14 @@ circular.
             - `InsereExercito`:
                 - Adiciona um exército à arena, no primeiro espaço vazio de
                 *exercitos*.
+                - A posição no *mapa* onde ficará a base do exército novo é
+                convertida para *BASE* com 0 cristais.
+                - O exército adicionado tem seu ponteiro *a* ajustado para a
+                arena, seu *id* ajustado para sua posição na arena e o valor
+                *e* de sua base também é ajustado.
                 - Recebe:
                     - `Arena *arena`:
                         - A arena que irá recebe o novo exército.
-                    - `INSTR **progs`:
-                        - Os programas dos robôs do novo exército.
-                    - `int n`:
-                        - A quantidade de programas contidos em `progs`.
                     - `int x`:
                         - A posição horizontal da base do exército novo.
                     - `int y`:
@@ -425,6 +502,8 @@ circular.
                 - Não possui `return`.
             - `RemoveExercito`:
                 - Remove um exército da arena, na posição dada.
+                - A posição no *mapa* onde fica a base do exército que será
+                removido é convertida para *ESTRADA* com o máximo de cristais.
                 - Recebe:
                     - `Arena *arena`:
                         - Arena que terá o exército removido.
@@ -432,20 +511,27 @@ circular.
                         - Posição do exército que será removido.
                 - Não possui `return`.
             - `Sistema`:
-                - Função responsável pela comunicação entre `Maquina` e `Arena`.
+                - Função responsável pela comunicação entre máquina e arena.
                 - Recebe:
                     - `Maquina *m`:
-                        - A máquina que está fazendo a slicitação.
+                        - A máquina que está fazendo a solicitação.
                     - `OPERANDO op`:
                         - A instrução que a máquina está passando.
-                        - Lembrando que esse `OPERANDO` deve ser sempre do tipo
-                        `ACAO`.
+                        - Esse `OPERANDO` deve ser sempre do tipo *ACAO*.
                 - Retorna:
                     - `OPERANDO` de acordo com a solicitação feita.
+            - `imprime_mapa`:
+                - Imprime os valores nas células do *mapa* de uma arena.
+                - A impressão é feita somente com os valores numéricos,
+                separados por vírgulas, para não ocupar muito espaço na linha.
+                - Recebe:
+                    - `Arena *a`:
+                        - A arena cujo mapa será impresso.
+                - Não possui `return`.
     - **arena.c**:
-        - Implementa as funções `cria_arena`, `cria_arena_file`, `Atualiza`,
-        `InsereExercito`, `RemoveExercito` e `Sistema`.
-        - Implementa as funções `Erro` e `Fatal`, para gerenciamento de erros.
+        - Implementa as funções `cria_arena`, `cria_arena_file`,
+        `destroi_arena`, `Atualiza`, `InsereExercito`, `RemoveExercito`,
+        `Sistema` e `imprime_mapa`.
 
 --------------------------------------------------------------------------------
 
@@ -454,8 +540,17 @@ circular.
         - Acrescentadas as instruções *ATR* e *SYS* a `OpCode`.
         - `OPERANDO` foi movido para um arquivo próprio (**operando.h**).
 
+    - **maq.h**:
+        - `Maquina`:
+            - Também define `struct Maquina`.
+            - Os valores *pil* e *exec* agora são ponteiros do tipo `Pilha*`.
+            - Novo valor adicionado:
+                - *r*:
+                    - Tipo: `Robo*`
+                    - Representa o robô ao qual a máquina pertence.
     - **maq.c**:
         - Todas as instruções foram adaptadas ao novo formato de `OPERANDO`.
+        - Todas as funções foram adaptadas para o novo formato de `Maquina`.
         - As instruções *ADD*, *SUB*, *MUL*, *DIV*, *JIT*, *JIF*, *EQ*, *GT*,
         *GE*, *LT*, *LE*, *NE*, *STO* e *RCL* agora gerenciam possíveis erros.
         - Aprimoração das mensagens de erro:

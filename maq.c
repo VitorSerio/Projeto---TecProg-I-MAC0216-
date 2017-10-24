@@ -113,7 +113,7 @@ void exec_maquina(Maquina *m, int n) {
                     empilha(pil, tmp1);
                     break;
                 }
-                Fatal("Erro: OPERANDO nao numerico", 4);
+                Fatal("Erro: OPERANDO não numérico", 4);
             case SUB:
                 tmp1 = desempilha(pil);
                 tmp2 = desempilha(pil);
@@ -122,7 +122,7 @@ void exec_maquina(Maquina *m, int n) {
                     empilha(pil, tmp2);
                     break;
                 }
-                Fatal("Erro: OPERANDO nao numerico", 4);
+                Fatal("Erro: OPERANDO não numérico", 4);
             case MUL:
                 tmp1 = desempilha(pil);
                 tmp2 = desempilha(pil);
@@ -131,7 +131,7 @@ void exec_maquina(Maquina *m, int n) {
                     empilha(pil, tmp1);
                     break;
                 }
-                Fatal("Erro: OPERANDO nao numerico", 4);
+                Fatal("Erro: OPERANDO não numérico", 4);
             case DIV:
                 tmp1 = desempilha(pil);
                 tmp2 = desempilha(pil);
@@ -140,7 +140,7 @@ void exec_maquina(Maquina *m, int n) {
                     empilha(pil, tmp2);
                     break;
                 }
-                Fatal("Erro: OPERANDO nao numerico", 4);
+                Fatal("Erro: OPERANDO não numérico", 4);
             case JMP:
                 ip = arg.val.n;
                 continue;
@@ -153,7 +153,7 @@ void exec_maquina(Maquina *m, int n) {
                     }
                     break;
                 }
-                Fatal("Erro: OPERANDO nao numerico", 4);
+                Fatal("Erro: OPERANDO não numérico", 4);
             case JIF:
                 tmp1 = desempilha(pil);
                 if (tmp1.t == NUM) {
@@ -163,7 +163,7 @@ void exec_maquina(Maquina *m, int n) {
                     }
                     break;
                 }
-                Fatal("Erro: OPERANDO nao numerico", 4);
+                Fatal("Erro: OPERANDO não numérico", 4);
             case CALL:
                 tmp1.t = NUM;
                 tmp1.val.n = ip;
@@ -183,7 +183,7 @@ void exec_maquina(Maquina *m, int n) {
             case RET:
                 // Recupera valor anterior do RBP.
                 if (rsp != rbp) {
-                    Erro("Aviso: Espaco nao desalocado. Desalocacao forcada.");
+                    Erro("Aviso: Espaço não desalocado. Desalocação forçada.");
                     rsp = rbp;
                 }
                 tmp1 = desempilha(exec);
@@ -205,7 +205,7 @@ void exec_maquina(Maquina *m, int n) {
                     }
                     break;
                 }
-                Fatal("Erro: OPERANDO nao numerico", 4);
+                Fatal("Erro: OPERANDO não numérico", 4);
             case GT:
                 tmp1 = desempilha(pil);
                 tmp2 = desempilha(pil);
@@ -220,7 +220,7 @@ void exec_maquina(Maquina *m, int n) {
                     }
                     break;
                 }
-                Fatal("Erro: OPERANDO nao numerico", 4);
+                Fatal("Erro: OPERANDO não numérico", 4);
             case GE:
                 tmp1 = desempilha(pil);
                 tmp2 = desempilha(pil);
@@ -235,7 +235,7 @@ void exec_maquina(Maquina *m, int n) {
                     }
                     break;
                 }
-                Fatal("Erro: OPERANDO nao numerico", 4);
+                Fatal("Erro: OPERANDO não numérico", 4);
             case LT:
                 tmp1 = desempilha(pil);
                 tmp2 = desempilha(pil);
@@ -250,7 +250,7 @@ void exec_maquina(Maquina *m, int n) {
                     }
                     break;
                 }
-                Fatal("Erro: OPERANDO nao numerico", 4);
+                Fatal("Erro: OPERANDO não numérico", 4);
             case LE:
                 tmp1 = desempilha(pil);
                 tmp2 = desempilha(pil);
@@ -265,7 +265,7 @@ void exec_maquina(Maquina *m, int n) {
                     }
                     break;
                 }
-                Fatal("Erro: OPERANDO nao numerico", 4);
+                Fatal("Erro: OPERANDO não numérico", 4);
             case NE:
                 tmp1 = desempilha(pil);
                 tmp2 = desempilha(pil);
@@ -280,16 +280,16 @@ void exec_maquina(Maquina *m, int n) {
                     }
                     break;
                 }
-                Fatal("Erro: OPERANDO nao numerico", 4);
+                Fatal("Erro: OPERANDO não numérico", 4);
             case STO:
                 if (arg.val.n < 0 || arg.val.n > MAXMEM) {
-                    Fatal("Erro: Acesso fora dos limites da memoria", 4);
+                    Fatal("Erro: Acesso fora dos limites da memória", 4);
                 }
                 m->Mem[arg.val.n] = desempilha(pil);
                 break;
             case RCL:
                 if (arg.val.n < 0 || arg.val.n > MAXMEM) {
-                    Fatal("Erro: Acesso fora dos limites da memoria", 4);
+                    Fatal("Erro: Acesso fora dos limites da memória", 4);
                 }
                 empilha(pil, m->Mem[arg.val.n]);
                 break;
@@ -307,7 +307,7 @@ void exec_maquina(Maquina *m, int n) {
                 na posição dada */
                 tmp = arg.val.n + rbp;
                 if (tmp > rsp - 1 || arg.val.n < 0) {
-                    Fatal("Erro: Posicao fora do limite do frame", 4);
+                    Fatal("Erro: Posição fora do limite do frame", 4);
                 }
                 exec->val[tmp] = desempilha(pil);
                 break;
@@ -316,7 +316,7 @@ void exec_maquina(Maquina *m, int n) {
                 na posição dada, para a pilha de dados */
                 tmp = arg.val.n + rbp;
                 if (tmp > rsp - 1 || arg.val.n < 0) {
-                    Fatal("Erro: Posicao fora do limite do frame", 4);
+                    Fatal("Erro: Posição fora do limite do frame", 4);
                 }
                 empilha(pil, exec->val[tmp]);
                 break;
@@ -326,7 +326,7 @@ void exec_maquina(Maquina *m, int n) {
                 tamanho da pilha. */
                 tmp = rsp + arg.val.n;
                 if (tmp > PILMAX) {
-                    Fatal("Erro: Alocacao fora do limite da pilha", 4);
+                    Fatal("Erro: Alocação fora do limite da pilha", 4);
                 }
                 rsp = tmp;
                 break;
@@ -336,7 +336,7 @@ void exec_maquina(Maquina *m, int n) {
                 frame. */
                 tmp = rsp - arg.val.n;
                 if (tmp < rbp) {
-                    Fatal("Erro: Desalocacao fora do limite do frame", 4);
+                    Fatal("Erro: Desalocação fora do limite do frame", 4);
                 }
                 rsp = tmp;
                 break;
@@ -344,7 +344,7 @@ void exec_maquina(Maquina *m, int n) {
                 /*  */
                 tmp1 = desempilha(pil);
                 if (tmp1.t != CELULA) {
-                    Fatal("Erro: Atributos só podem ser obtidos de celulas", 4);
+                    Fatal("Erro: Atributos só podem ser obtidos de células", 4);
                 }
                 tmp2.t = NUM;
                 switch (arg.val.n) {
@@ -368,9 +368,9 @@ void exec_maquina(Maquina *m, int n) {
                     if (tmp1.val.ac.t == GET) empilha(pil, tmp1);
                     break;
                 }
-                Fatal("Erro: O sistema so pode ser chamado por uma acao", 4);
+                Fatal("Erro: O sistema só pode ser chamado por uma ação", 4);
             default:
-                Fatal("Erro: Instrucao nao definida", 4);
+                Fatal("Erro: Instrução não definida", 4);
         }
         D(imprime(pil,5));
         D(puts("\n"));

@@ -344,8 +344,7 @@ static void testa_celula() {
 
     // Testando cria_celula
     printf("Criando uma célula:\n");
-    Celula *cel = cria_celula(celulas[0].t, celulas[0].c,
-                              celulas[0].oc);
+    Celula *cel = cria_celula(celulas[0].t, celulas[0].c);
     printf("Terreno = %d, Cristais = %d, Ocupado = %d\n", cel->t,
            cel->c, cel->oc);
     printf("Célula criada!\n");
