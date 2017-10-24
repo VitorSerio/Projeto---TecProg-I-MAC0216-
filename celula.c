@@ -17,12 +17,12 @@ static char *toString_terreno(Terreno t) {
     return strings[t];
 }
 
-Celula *cria_celula(Terreno t, short int c, short int oc) {
+Celula *cria_celula(Terreno t, short int c) {
     Celula *cel = (Celula*)malloc(sizeof(Celula));
     if (!cel) Fatal("Memória insuficiente para Celula", 4);
     cel->t = t;
     cel->c = c;
-    cel->oc = oc;
+    cel->oc = 0;
 
     return cel;
 }

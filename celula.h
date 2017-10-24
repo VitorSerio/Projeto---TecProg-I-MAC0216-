@@ -1,6 +1,8 @@
 #ifndef CELULA_H
 #define CELULA_H
 
+#define MAX_CRYSTAL 10
+
 /* Tipo de terreno */
 typedef enum {
     ESTRADA,
@@ -17,7 +19,7 @@ typedef struct Celula {
     short int oc;
 } Celula;
 
-Celula *cria_celula(Terreno tr, short int cr, short int oc);
+Celula *cria_celula(Terreno t, short int c);
 void destroi_celula(Celula *cel);
 char *toString_celula(Celula cel);
 

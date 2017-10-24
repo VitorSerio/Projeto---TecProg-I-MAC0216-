@@ -18,7 +18,7 @@ Exercito *cria_exercito(int x, int y) {
     if (!e) Fatal("Erro: Memória insuficiente para Exercito",4);
     e->b.x = x;
     e->b.y = y;
-    
+
     e->robos = (Robo**)malloc(MAX_ROBO * sizeof(Robo*));
     if (!e->robos) Fatal("Erro: Memória insuficiente para múltiplos Robo*",4);
     for (int i = 0; i < MAX_ROBO; i++) e->robos[i] = NULL;
@@ -58,7 +58,7 @@ void adiciona_robo(Exercito *e, INSTR *p) {
     e->size++;
 }
 
-void remove_robo(Exercito *e, int pos) {
+void remove_robo(Exercito *e, short int pos) {
     if (!e->robos[pos]) {
         Erro("Aviso: Não há robôs na posição dada.");
         return;

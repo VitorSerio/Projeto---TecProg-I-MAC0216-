@@ -6,7 +6,6 @@
 #include "exercito.h"
 
 #define MAX_TAMANHO 39 // hexagonal de lado 20
-#define MAX_CRYSTAL 10
 #define MAX_EXERCITOS 6
 
 typedef struct Arena {
