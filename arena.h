@@ -19,9 +19,9 @@ typedef struct Arena {
 Arena *cria_arena(int tamanho);
 Arena *cria_arena_file(FILE *fp);
 void destroi_arena(Arena *a);
-void Atualiza(Arena *a);
-void InsereExercito(Arena *a, int x, int y);
-void RemoveExercito(Arena *a, int pos);
+void Atualiza(Arena *a, int instrucoes);
+void InsereExercito(Arena *a, short int pos);
+void RemoveExercito(Arena *a, short int pos);
 OPERANDO Sistema(Maquina *m, OPERANDO op);
 void imprime_mapa(Arena *a);
 

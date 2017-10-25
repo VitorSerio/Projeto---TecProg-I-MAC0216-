@@ -1,9 +1,10 @@
 #ifndef BASE_H
 #define BASE_H
 
+#include "vetor.h"
+
 typedef struct Base {
-    int x;
-    int y;
+    Vetor pos;
     int e;
 } Base;
 

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include "maq.h"
 #include "robo.h"
@@ -15,46 +16,59 @@ static void Fatal(char *msg, int cod) {
     exit(cod);
 }
 
-Arena *cria_arena(int tam) {
+#define exCount (a->exercitosCount)
+#define tamanho (a->tamanho)
+#define execs (a->execucoes)
+#define mapa (a->mapa)
+#define exercitos (a->exercitos)
+
+static Arena *inicializa_arena(int tam) {
     if (tam > MAX_TAMANHO) {
         Erro("Aviso: Tamanho passado para a arena é maior que o limite.");
-        Erro("Arena criada terá o tamanho limite.");
-        tam = MAX_TAMANHO;
+        printf("Por favor, entre com outro valor para o tamanho do mapa, que");
+        printf("seja menor que %d:\n", MAX_TAMANHO);
+        scanf("%d\n", &tam);
     }
-    else if (!(tam % 2)) {
+    if (!(tam % 2)) {
         Erro("Aviso: Tamanho passado para a arena é par e deveria ser ímpar.");
-        Erro("Arena criada terá tamanho igual ao tamanho dado - 1.");
-        tam--;
+        printf("Por favor, entre com outro valor para o tamanho do mapa, que");
+        printf("seja ímpar:\n");
+        scanf("%d\n", &tam);
     }
 
     Arena *a = (Arena*)malloc(sizeof(Arena));
     if (!a) Fatal("Memória insuficiente para Arena", 4);
 
-    a->exercitosCount = 0;
-    a->tamanho = tam;
-    a->execucoes = 0;
+    exCount = 0;
+    tamanho = tam;
+    execs = 0;
 
-    a->exercitos = (Exercito**)malloc(MAX_EXERCITOS * sizeof(Exercito*));
-    if (!a->exercitos) Fatal("Erro: Memória insuficiente para múltiplos Exercito*", 4);
-    for (int i = 0; i < MAX_EXERCITOS; i++)
-        a->exercitos[i] = NULL;
+    exercitos = (Exercito**)malloc(MAX_EXERCITOS * sizeof(Exercito*));
+    if (!exercitos) Fatal("Erro: Memória insuficiente para múltiplos Exercito*", 4);
+    for (int i = 0; i < MAX_EXERCITOS; i++) exercitos[i] = NULL;
 
-    a->mapa = (Celula***)malloc(tam * sizeof(Celula**));
-    if (!a->mapa) Fatal("Erro: Memória insuficiente para múltiplas Celula**.", 4);
+    mapa = (Celula***)malloc(tam * sizeof(Celula**));
+    if (!mapa) Fatal("Erro: Memória insuficiente para múltiplas Celula**.", 4);
+
+    return a;
+}
+
+Arena *cria_arena(int tam) {
+    Arena *a = inicializa_arena(tam);
 
     for(int i = 0; i < tam; i++) {
-        a->mapa[i] = (Celula**)malloc(tam * sizeof(Celula*));
-        if (!a->mapa[i]) Fatal("Erro: Memória insuficiente para  múltiplas Celula*.", 4);
+        mapa[i] = (Celula**)malloc(tam * sizeof(Celula*));
+        if (!mapa[i]) Fatal("Erro: Memória insuficiente para  múltiplas Celula*.", 4);
         for(int j = 0; j < tam; j++) {
             int ht = tam / 2;
             int sum = i + j;
             // Deixa algumas células vazias, para simular um grid hexagonal
-            if (sum < ht) a->mapa[i][j] = NULL;
-            else if (sum >= tam + ht) a->mapa[i][j] = NULL;
+            if (sum < ht) mapa[i][j] = NULL;
+            else if (sum >= tam + ht) mapa[i][j] = NULL;
             else {
                 int tr = rand() % 4;
                 short int cr = rand() % (MAX_CRYSTAL + 1);
-                a->mapa[i][j] = cria_celula(tr, cr);
+                mapa[i][j] = cria_celula(tr, cr);
             }
         }
     }
@@ -65,46 +79,21 @@ Arena *cria_arena(int tam) {
 Arena *cria_arena_file(FILE *fp) {
     int tam;
     fscanf(fp, "%d\n", &tam);
-    if (tam > MAX_TAMANHO) {
-        Erro("Aviso: Tamanho passado para a arena é maior que o limite.");
-        Erro("Arena criada terá o tamanho limite.");
-        tam = MAX_TAMANHO;
-    }
-    else if (!(tam % 2)) {
-        Erro("Aviso: Tamanho passado para a arena é par e deveria ser ímpar.");
-        Erro("Arena criada terá tamanho igual ao tamanho dado - 1.");
-        tam--;
-    }
+    Arena *a = inicializa_arena(tam);
 
-
-    Arena *a = (Arena*)malloc(sizeof(Arena));
-
-
-    a->tamanho = tam;
-    a->execucoes = 0;
-    a->exercitosCount = 0;
-
-    a->exercitos = (Exercito**)malloc(MAX_EXERCITOS * sizeof(Exercito*));
-    if (!a->exercitos) Fatal("Erro: Memória insuficiente para exércitos.", 4);
-    for (int i = 0; i < MAX_EXERCITOS; i++)
-        a->exercitos[i] = NULL;
-
-    a->mapa = (Celula***)malloc(tam * sizeof(Celula**));
-    if (!a->mapa) Fatal("Erro: Memória insuficiente para mapa.", 4);
-
-    for(int i = 0; i < a->tamanho; i++) {
-        a->mapa[i] = (Celula**)malloc(tam * sizeof(Celula*));
-        if (!a->mapa[i]) Fatal("Erro: Memória insuficiente para linha do mapa.", 4);
-        for(int j = 0; j < a->tamanho; j++) {
+    for(int i = 0; i < tamanho; i++) {
+        mapa[i] = (Celula**)malloc(tam * sizeof(Celula*));
+        if (!mapa[i]) Fatal("Erro: Memória insuficiente para linha do mapa.", 4);
+        for(int j = 0; j < tamanho; j++) {
             int ht = tam / 2;
             int sum = i + j;
             // Deixa algumas células vazias, para simular um grid hexagonal
-            if (sum < ht) a->mapa[i][j] = NULL;
-            else if (sum >= tam + ht) a->mapa[i][j] = NULL;
+            if (sum < ht) mapa[i][j] = NULL;
+            else if (sum >= tam + ht) mapa[i][j] = NULL;
             else {
                 int t, c;
                 fscanf(fp, "%d,%d\n", &t, &c);
-                a->mapa[i][j] = cria_celula(t, c);
+                mapa[i][j] = cria_celula(t, c);
             }
         }
     }
@@ -113,122 +102,135 @@ Arena *cria_arena_file(FILE *fp) {
 }
 
 void destroi_arena(Arena *a) {
-    for (int i = 0; i < a->tamanho; i++) {
-        for (int j = 0; j < a->tamanho; j++)
-            destroi_celula(a->mapa[i][j]);
-        free(a->mapa[i]);
-        a->mapa[i] = NULL;
+    for (int i = 0; i < tamanho; i++) {
+        for (int j = 0; j < tamanho; j++)
+            if (mapa[i][j]) destroi_celula(mapa[i][j]);
+        free(mapa[i]);
+        mapa[i] = NULL;
     }
-    free(a->mapa);
-    a->mapa = NULL;
+    free(mapa);
+    mapa = NULL;
 
     for (int i = 0; i < MAX_EXERCITOS; i++)
-        destroi_exercito(a->exercitos[i]);
-    free(a->exercitos);
-    a->exercitos = NULL;
+        if (exercitos[i]) destroi_exercito(exercitos[i]);
+    free(exercitos);
+    exercitos = NULL;
 
     free(a);
     a = NULL;
 }
 
-void Atualiza(Arena *a) {
+void Atualiza(Arena *a, int instrucoes) {
     for(int i = 0; i < MAX_EXERCITOS; i++) {
-        Exercito *e = a->exercitos[i];
+        Exercito *e = exercitos[i];
         if (e)
             for(int j = 0; j < MAX_ROBO; j++) {
                 Robo *r = e->robos[j];
                 if (r) {
-                    roda_robo(r, 50);
-                    a->execucoes++;
+                    roda_robo(r, instrucoes);
+                    execs++;
                 }
             }
     }
 }
 
-void InsereExercito(Arena *a, int x, int y) {
-    if (a->exercitosCount + 1 > MAX_ROBO) {
-        Erro("Aviso: Não é possível adicionar mais exércitos à arena.");
-        return;
-    }
-    int i = 0;
-    while (i < MAX_EXERCITOS) {
-        if (!a->exercitos[i]) break;
-        i++;
-    }
-    a->exercitos[i] = cria_exercito(x, y);
-    a->exercitos[i]->id = i;
-    a->exercitos[i]->b.e = i;
-    a->exercitos[i]->a = a;
-    a->exercitosCount++;
+void InsereExercito(Arena *a, short int pos) {
 
-    a->mapa[x][y] = cria_celula(BASE, 0);
+    if (exercitos[pos]) {
+
+        Erro("Aviso: Já existe um exército na posição dada.");
+        char res[2];
+        printf("Deseja substituir o exército ativo na posição %d? (S/N)\n",
+                pos);
+        scanf("%s", res);
+
+        if (strcmp(res, "S")) {
+
+            printf("Deseja tentar criar um exército em outra posição? (S/N)\n");
+            scanf("%s", res);
+
+            if (strcmp(res, "S")) return;
+
+            printf("Qual posição? (de 0 a %d)\n", MAX_EXERCITOS-1);
+            scanf("%hd", &pos);
+
+            InsereExercito(a, pos);
+            return;
+        }
+        RemoveExercito(a, pos);
+    }
+
+    Vetor bases[] = {
+        {1, tamanho / 2}, {1, tamanho - 2},
+        {tamanho / 2, 1}, {tamanho / 2, tamanho - 2},
+        {tamanho - 2, 1}, {tamanho - 2, tamanho / 2}
+    };
+
+    exercitos[pos] = cria_exercito(bases[pos], pos);
+    exercitos[pos]->b.e = pos;
+    exercitos[pos]->a = a;
+    exCount++;
+
+    mapa[bases[pos].x][bases[pos].y] = cria_celula(BASE, 0);
 }
 
-void RemoveExercito(Arena *a, int pos){
-    Exercito *e = a->exercitos[pos];
-    if (!e) {
-        Erro("Aviso: Não há robôs na posição dada.");
+void RemoveExercito(Arena *a, short int pos){
+
+    if (!exercitos[pos]) {
+
+        Erro("Aviso: Não há exército na posição dada.");
+        printf("Deseja tentar remover outro exército? (S/N)\n");
+        char res[2];
+        scanf("%s", res);
+
+        if (strcmp(res, "S")) return;
+
+        printf("Qual exército deverá ser removido? (de 0 a %d)\n",
+                MAX_EXERCITOS-1);
+        scanf("%hd", &pos);
+
+        RemoveExercito(a, pos);
         return;
     }
-    int x = e->b.x;
-    int y = e->b.y;
-    a->mapa[x][y] = cria_celula(ESTRADA, MAX_CRYSTAL);
+    Vetor base = exercitos[pos]->b.pos;
 
-    destroi_exercito(e);
-    e = NULL;
-    a->exercitosCount--;
+    mapa[base.x][base.x] = cria_celula(ESTRADA, MAX_CRYSTAL);
+
+    destroi_exercito(exercitos[pos]);
+    exercitos[pos] = NULL;
+    exCount--;
 }
 
 OPERANDO Sistema(Maquina *m, OPERANDO op) {
+
     Acao ac = op.val.ac;
     Robo *r = m->r;
     Arena *a = m->r->e->a;
+
+    Vetor d[] = {{-1, 1}, {0, -1}, {-1, 0}, {1, 0}, {0, 1}, {1, -1}};
+
+    int i = (int) ac.d;
+    i += (i > 0) ? 2 : 3;
+
+    Vetor res = soma_vet(r->pos, d[i]);
+
     switch (ac.t) {
         Celula cel;
-        int dx;
-        int dy;
-        switch (ac.d) {
-            case A1:
-                dx = 1;
-                dy = 0;
-                break;
-            case A2:
-                dx = 0;
-                dy = 1;
-                break;
-            case A3:
-                dx = 1;
-                dy = -1;
-                break;
-            case A1_:
-                dx = -1;
-                dy = 0;
-                break;
-            case A2_:
-                dx = 0;
-                dy = -1;
-                break;
-            case A3_:
-                dx = -1;
-                dy = 1;
-                break;
-        }
         case MOV:
-            r->x += dx;
-            r->y += dy;
+            r->pos = res;
             break;
         case ATK:
             break;
         case GET:
-            cel = *a->mapa[r->x + dx][r->y + dy];
+            cel = *mapa[res.x][res.y];
             return (OPERANDO) {.t = CELULA, .val.cel = cel};
             break;
         case PEG:
-            a->mapa[r->x + dx][r->y + dy]->c--;
+            mapa[res.x][res.y]->c--;
             r->c++;
             break;
         case DEP:
-            a->mapa[r->x + dx][r->y + dy]->c++;
+            mapa[res.x][res.y]->c++;
             r->c--;
             break;
     }
@@ -236,12 +238,11 @@ OPERANDO Sistema(Maquina *m, OPERANDO op) {
 }
 
 void imprime_mapa(Arena *a) {
-    int n = a->tamanho;
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            if (!a->mapa[i][j]) printf("NULL  ");
-            else printf("%d,%d,%d ", a->mapa[i][j]->t, a->mapa[i][j]->c,
-                        a->mapa[i][j]->oc);
+    for (int i = 0; i < tamanho; i++) {
+        for (int j = 0; j < tamanho; j++) {
+            if (!mapa[i][j]) printf("NULL   ");
+            else printf("%d,%02d,%d ", mapa[i][j]->t, mapa[i][j]->c,
+                        mapa[i][j]->oc);
         }
         printf("\n");
     }

@@ -13,11 +13,29 @@ static void roda_robos(Exercito *e, int vezes, short int n) {
     }
 }
 
-static void adiciona_robos(Exercito *e, INSTR *p, short int n) {
-    for (int i = 0; i < n; i++) {
+static void adiciona_robos(Exercito *e, INSTR *p, short int start,
+                            short int end) {
+    for (int i = start; i < end; i++) {
         printf("Adicionando robo %d:\n", i+1);
-        adiciona_robo(e, p);
+        adiciona_robo(e, i, p);
         printf("Tamanho do exército = %d\n", e->size);
+    }
+}
+
+static void adiciona_exercitos(Arena *a, short int start, short int end) {
+    for (int i = start; i < end; i++) {
+        printf("Adicionando exército %d:\n", i+1);
+        InsereExercito(a, i);
+        printf("Quantidade de exércitos = %d\n", a->exercitosCount);
+    }
+}
+
+static void preenche_exercitos(Arena *a, INSTR *p, short int start,
+                                short int end) {
+    for (int i = start; i < end; i++) {
+        printf("Preenchendo exército %d:\n", i);
+        adiciona_robos(a->exercitos[i], p, 0, 6);
+        printf("Tamanho do exército %d = %d\n", i, a->exercitos[i]->size);
     }
 }
 
@@ -25,11 +43,40 @@ static void adiciona_robos(Exercito *e, INSTR *p, short int n) {
 // TESTA ARENA
 
 static void testa_arena(){
+    // Variáveis auxiliares
+    INSTR fibo[] = {
+        {PUSH, {.t = NUM, .val.n = 1}},
+        {DUP, {.t = NUM, .val.n = 0}},
+        {STO, {.t = NUM, .val.n = 0}},
+        {STO, {.t = NUM, .val.n = 1}},
+        {PUSH, {.t = NUM, .val.n = 10}},
+        {STO, {.t = NUM, .val.n = 2}},
+        {RCL, {.t = NUM, .val.n = 0}},
+        {RCL, {.t = NUM, .val.n = 1}},
+        {DUP, {.t = NUM, .val.n = 0}},
+        {STO, {.t = NUM, .val.n = 0}},
+        {ADD, {.t = NUM, .val.n = 0}},
+        {DUP, {.t = NUM, .val.n = 0}},
+        {STO, {.t = NUM, .val.n = 1}},
+        {PRN, {.t = NUM, .val.n = 0}},
+        {RCL, {.t = NUM, .val.n = 2}},
+        {PUSH, {.t = NUM, .val.n = 1}},
+        {SUB, {.t = NUM, .val.n = 0}},
+        {DUP, {.t = NUM, .val.n = 0}},
+        {STO, {.t = NUM, .val.n = 2}},
+        {PUSH, {.t = NUM, .val.n = 0}},
+        {EQ, {.t = NUM, .val.n = 0}},
+        {JIF, {.t = NUM, .val.n = 6}},
+        {END, {.t = NUM, .val.n = 0}},
+    };
+
+    short int n = 2;
+
     // Testando erro tam > MAX_TAMANHO em cria_arena
     printf("Criando arena:\n");
     Arena *a = cria_arena(53);
-    printf("Arena criada!\n");
-    if (a->tamanho == MAX_TAMANHO) {
+    printf("Tamanho da arena = %d\n", a->tamanho);
+    if (a->tamanho <= MAX_TAMANHO) {
         printf("O gerenciamento de erro do tipo tamanho > MAX_TAMANHO em ");
         printf("Arena *a = cria_arena(int tam) está OK!\n");
     }
@@ -44,9 +91,9 @@ static void testa_arena(){
     printf("void destroi_exercito(Exercito *e) está OK!\n");
 
     // Testando erro tam par em cria_arena
-    printf("Criando arena:\n");
+    printf("\nCriando arena:\n");
     a = cria_arena(20);
-    printf("Arena criada!\n");
+    printf("Tamanho da arena = %d\n", a->tamanho);
     if (a->tamanho % 2) {
         printf("O gerenciamento de erro do tipo tamanho par em ");
         printf("Arena *a = cria_arena(int tam) está OK!\n");
@@ -65,6 +112,20 @@ static void testa_arena(){
     imprime_mapa(a);
     printf("Arena *a = cria_arena(int tam) está OK!\n");
     printf("void imprime_mapa(Arena *a) está OK!\n");
+
+    // Testando InsereExercito
+    printf("\nAdicionando %d exércitos:\n", n);
+    adiciona_exercitos(a, 0, n);
+    if (a->exercitosCount == n) {
+        printf("Adições em ordem de void adiciona_robo(Exercito *e, INSTR *p)");
+        printf(" está OK!\n");
+    }
+    else {
+        printf("Adições em ordem de void adiciona_robo(Exercito *e, INSTR *p)");
+        printf(" está ERRADA!\n");
+        return;
+    }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -100,11 +161,12 @@ static void testa_exercito() {
 
     int exec = 50;
     short int n = 2;
-    int pos = n+1;
+    short int pos = n+1;
+    Vetor v = {0, 0};
 
     // Testando cria_exercito
     printf("Criando exército:\n");
-    Exercito *e = cria_exercito(0, 0);
+    Exercito *e = cria_exercito(v, 0);
     printf("Exercito criado!\n");
     printf("Tamanho do exército = %d\n", e->size);
     printf("Exercito *cria_exercito(INSTR *progs[], short int n, short ");
@@ -112,10 +174,12 @@ static void testa_exercito() {
 
     // Testando adiciona_robo
     printf("\nAdicionando %d robôs:\n", n);
-    adiciona_robos(e, fibo, n);
+    adiciona_robos(e, fibo, 0, n);
+
     printf("Rodando robôs:\n");
     roda_robos(e, exec, n);
     printf("Robôs funcionando!\n");
+
     if (e->size == n) {
         printf("Adições em ordem de void adiciona_robo(Exercito *e, INSTR *p)");
         printf(" está OK!\n");
@@ -127,10 +191,16 @@ static void testa_exercito() {
     }
 
     // Testando erros em remove_robo
-    printf("\nRemovendo um robô inexistente:\n");
+    printf("\nRemovendo um robô inexistente: (Ideia é testar opção 'N')\n");
     remove_robo(e, pos);
     printf("Tamanho do exército = %d\n", e->size);
-    if (e->size == n && !e->robos[pos]) {
+
+    printf("Removendo um robô inexistente de novo: (Ideia é testar opção 'S' ");
+    printf("e, depois, escolher o valor 1)\n");
+    remove_robo(e, pos);
+    printf("Tamanho do exército = %d\n", e->size);
+
+    if (e->size == n-1 && !e->robos[1]) {
         printf("Gerenciamento de erro de void remove_robo(Exercito *e, int ");
         printf("pos) está OK!\n");
     }
@@ -141,9 +211,21 @@ static void testa_exercito() {
     }
 
     // Testando adiciona_robos, com já havendo alguns robôs e erros
-    n = MAX_ROBO - n + 1;
-    printf("\nAdicionando mais robôs (com um excedente):\n");
-    adiciona_robos(e, fibo, n);
+    n = MAX_ROBO;
+    printf("\nAdicionando restante dos robôs:\n");
+    adiciona_robos(e, fibo, e->size, n);
+    printf("Robôs adicionados!\n");
+
+    printf("Adicionando robô em posição já ocupada: (Ideia é testar opção 'S'");
+    printf(")\n");
+    adiciona_robo(e, pos, fibo);
+    printf("Tamanho do exército = %d\n", e->size);
+
+    printf("Adicionando robô em posição já ocupada de novo: (Ideia é testar");
+    printf(" opções 'N', 'S', qualquer coisa, 'N', 'N')\n");
+    adiciona_robo(e, pos, fibo);
+    printf("Tamanho do exército = %d\n", e->size);
+
     if (e->size == MAX_ROBO) {
         printf("Gerenciamento de erro de void adiciona_robo(Exercito *e, ");
         printf("INSTR *p) está OK!\n");
@@ -155,7 +237,6 @@ static void testa_exercito() {
     }
 
     // Testando se a adição funcionou de fato
-    n = MAX_ROBO;
     printf("\nTestando robôs novos:\n");
     roda_robos(e, exec, n);
     printf("Adições em ordem de void adiciona_robo(Exercito *e, INSTR *p) ");
@@ -165,6 +246,7 @@ static void testa_exercito() {
     printf("\nRemovendo um robô existente:\n");
     remove_robo(e, pos);
     printf("Tamanho do exército = %d\n", e->size);
+
     if (e->size == MAX_ROBO - 1 && !e->robos[pos])
         printf("void remove_robo(Exercito *e, int pos) está OK!\n");
     else {
@@ -174,10 +256,12 @@ static void testa_exercito() {
 
     // Testando adiciona_robo com um espaço vazio no meio
     printf("\nAdicionando um robô no espaço vazio:\n");
-    adiciona_robo(e, fibo);
+    adiciona_robo(e, pos, fibo);
     printf("Tamanho do exército = %d\n", e->size);
+
     printf("\nTestando robô novo:\n");
     roda_robo(e->robos[pos], exec);
+
     if (e->size == MAX_ROBO)
         printf("void adiciona_robo(Exercito *e, INSTR *p) está OK!\n");
     else {
@@ -246,9 +330,11 @@ static void testa_robo() {
         {RET, {.t = NUM, .val.n = 0}},
     };
 
+    Vetor v = {0, 0};
+
     // Testando cria_robo
     printf("Criando robô:\n");
-    Robo *r = cria_robo(fac8, 0, 0);
+    Robo *r = cria_robo(fac8, v, 0);
     printf("Robo criado!\n");
     printf("Robo *cria_robo(INSTR *p, short int e, int x, int y) está OK!\n");
 
@@ -271,6 +357,24 @@ static void testa_robo() {
     printf("\nDestruindo robô:\n");
     destroi_robo(r);
     printf("void destroi_robo(Robo *r) está OK!\n");
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// TESTA VETOR
+
+static void testa_vetor() {
+    // Variáveis auxiliares
+    Vetor v1 = {3, 5};
+    Vetor v2 = {2, 8};
+
+    // Testando soma_vet
+    printf("Somando dois vetores:\n");
+    Vetor v3 = soma_vet(v1, v2);
+    printf("Vetores somados!\n");
+    if (v3.x == v1.x + v2.x && v3.y == v1.y + v2.y)
+        printf("Vetor soma_vet(Vetor v1, Vetor v2) está OK!\n");
+    else
+        printf("Vetor soma_vet(Vetor v1, Vetor v2) está ERRADA!\n");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -301,7 +405,7 @@ static void testa_operando() {
         printf("Operando %d: %s\n", i+1, str);
         free(str);
     }
-    printf("char *toString(OPERANDO op) está OK!\n");
+    printf("char *toString_operando(OPERANDO op) está OK!\n");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -374,32 +478,30 @@ int main(int argc, char const *argv[]) {
     if (argc == 1 || !strcmp(argv[1], "-a")) {
         printf("Testando arena.c:\n\n");
         testa_arena();
-        return 0;
     }
     else if (!strcmp(argv[1], "-e")) {
         printf("Testando exercito.c:\n\n");
         testa_exercito();
-        return 0;
     }
     else if (!strcmp(argv[1], "-r")) {
         printf("Testando robo.c:\n\n");
         testa_robo();
-        return 0;
+    }
+    else if (!strcmp(argv[1], "-v")) {
+        printf("Testando vetor.c:\n");
+        testa_vetor();
     }
     else if (!strcmp(argv[1], "-o")) {
         printf("Testando operando.c:\n\n");
         testa_operando();
-        return 0;
     }
     else if (!strcmp(argv[1], "-ac")) {
         printf("Testando acao.c:\n\n");
         testa_acao();
-        return 0;
     }
     else if (!strcmp(argv[1], "-cel")) {
         printf("Testando celula.c:\n\n");
         testa_celula();
-        return 0;
     }
     else {
         printf("%s não é uma opção válida.\n", argv[1]);

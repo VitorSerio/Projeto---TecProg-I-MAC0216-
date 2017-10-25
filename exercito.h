@@ -14,9 +14,9 @@ typedef struct Exercito {
     struct Arena *a;
 } Exercito;
 
-Exercito *cria_exercito(int x, int y);
+Exercito *cria_exercito(Vetor bpos, short int id);
 void destroi_exercito(Exercito *e);
-void adiciona_robo(Exercito *e, INSTR *p);
+void adiciona_robo(Exercito *e, short int pos, INSTR *p);
 void remove_robo(Exercito *e, short int pos);
 
 #endif
