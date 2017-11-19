@@ -21,6 +21,8 @@ Robo *cria_robo(INSTR *p, int x, int y) {
     r->x = x;
     r->y = y;
     r->c = 0;
+    r->s = 0;
+    r->o = 0;
     return r;
 }
 
@@ -38,4 +40,20 @@ void troca_prog(Robo *r, INSTR *p) {
 
 void roda_robo(Robo *r, int n) {
     exec_maquina(r->m, n);
+}
+
+void diminui_saude(Robo *r, int quant){
+    r->s += quant;
+}
+
+void diminui_saude(Robo *r, int quant){
+    r->s += quant;
+}
+
+void altera_ocupacao(Robo *r, int quant){
+    r->o = quant;
+}
+
+void decrementa_ocupacao(Robo *r){
+    r->o--;
 }
