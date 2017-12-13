@@ -18,7 +18,7 @@ static void adiciona_robos(Exercito *e, INSTR *p, short int start,
     for (int i = start; i < end; i++) {
         printf("Adicionando robo %d:\n", i+1);
         adiciona_robo(e, i, p);
-        printf("Tamanho do exército = %d\n", e->size);
+        printf("Tamanho do exército = %d\n", e->tamanho);
     }
 }
 
@@ -35,7 +35,7 @@ static void preenche_exercitos(Arena *a, INSTR *p, short int start,
     for (int i = start; i < end; i++) {
         printf("Preenchendo exército %d:\n", i);
         adiciona_robos(a->exercitos[i], p, 0, 6);
-        printf("Tamanho do exército %d = %d\n", i, a->exercitos[i]->size);
+        printf("Tamanho do exército %d = %d\n", i, a->exercitos[i]->tamanho);
     }
 }
 
@@ -168,7 +168,7 @@ static void testa_exercito() {
     printf("Criando exército:\n");
     Exercito *e = cria_exercito(v, 0);
     printf("Exercito criado!\n");
-    printf("Tamanho do exército = %d\n", e->size);
+    printf("Tamanho do exército = %d\n", e->tamanho);
     printf("Exercito *cria_exercito(INSTR *progs[], short int n, short ");
     printf("int e, int x, int y) está OK!\n");
 
@@ -180,7 +180,7 @@ static void testa_exercito() {
     roda_robos(e, exec, n);
     printf("Robôs funcionando!\n");
 
-    if (e->size == n) {
+    if (e->tamanho == n) {
         printf("Adições em ordem de void adiciona_robo(Exercito *e, INSTR *p)");
         printf(" está OK!\n");
     }
@@ -193,14 +193,14 @@ static void testa_exercito() {
     // Testando erros em remove_robo
     printf("\nRemovendo um robô inexistente: (Ideia é testar opção 'N')\n");
     remove_robo(e, pos);
-    printf("Tamanho do exército = %d\n", e->size);
+    printf("Tamanho do exército = %d\n", e->tamanho);
 
     printf("Removendo um robô inexistente de novo: (Ideia é testar opção 'S' ");
     printf("e, depois, escolher o valor 1)\n");
     remove_robo(e, pos);
-    printf("Tamanho do exército = %d\n", e->size);
+    printf("Tamanho do exército = %d\n", e->tamanho);
 
-    if (e->size == n-1 && !e->robos[1]) {
+    if (e->tamanho == n-1 && !e->robos[1]) {
         printf("Gerenciamento de erro de void remove_robo(Exercito *e, int ");
         printf("pos) está OK!\n");
     }
@@ -213,20 +213,20 @@ static void testa_exercito() {
     // Testando adiciona_robos, com já havendo alguns robôs e erros
     n = MAX_ROBO;
     printf("\nAdicionando restante dos robôs:\n");
-    adiciona_robos(e, fibo, e->size, n);
+    adiciona_robos(e, fibo, e->tamanho, n);
     printf("Robôs adicionados!\n");
 
     printf("Adicionando robô em posição já ocupada: (Ideia é testar opção 'S'");
     printf(")\n");
     adiciona_robo(e, pos, fibo);
-    printf("Tamanho do exército = %d\n", e->size);
+    printf("Tamanho do exército = %d\n", e->tamanho);
 
     printf("Adicionando robô em posição já ocupada de novo: (Ideia é testar");
     printf(" opções 'N', 'S', qualquer coisa, 'N', 'N')\n");
     adiciona_robo(e, pos, fibo);
-    printf("Tamanho do exército = %d\n", e->size);
+    printf("Tamanho do exército = %d\n", e->tamanho);
 
-    if (e->size == MAX_ROBO) {
+    if (e->tamanho == MAX_ROBO) {
         printf("Gerenciamento de erro de void adiciona_robo(Exercito *e, ");
         printf("INSTR *p) está OK!\n");
     }
@@ -245,9 +245,9 @@ static void testa_exercito() {
     // Testando remove_robo
     printf("\nRemovendo um robô existente:\n");
     remove_robo(e, pos);
-    printf("Tamanho do exército = %d\n", e->size);
+    printf("Tamanho do exército = %d\n", e->tamanho);
 
-    if (e->size == MAX_ROBO - 1 && !e->robos[pos])
+    if (e->tamanho == MAX_ROBO - 1 && !e->robos[pos])
         printf("void remove_robo(Exercito *e, int pos) está OK!\n");
     else {
         printf("void remove_robo(Exercito *e, int pos) está ERRADA!\n");
@@ -257,12 +257,12 @@ static void testa_exercito() {
     // Testando adiciona_robo com um espaço vazio no meio
     printf("\nAdicionando um robô no espaço vazio:\n");
     adiciona_robo(e, pos, fibo);
-    printf("Tamanho do exército = %d\n", e->size);
+    printf("Tamanho do exército = %d\n", e->tamanho);
 
     printf("\nTestando robô novo:\n");
     roda_robo(e->robos[pos], exec);
 
-    if (e->size == MAX_ROBO)
+    if (e->tamanho == MAX_ROBO)
         printf("void adiciona_robo(Exercito *e, INSTR *p) está OK!\n");
     else {
         printf("void adiciona_robo(Exercito *e, INSTR *p) está ERRADA!\n");
@@ -334,7 +334,7 @@ static void testa_robo() {
 
     // Testando cria_robo
     printf("Criando robô:\n");
-    Robo *r = cria_robo(fac8, v, 0);
+    Robo *r = cria_robo(fac8, v);
     printf("Robo criado!\n");
     printf("Robo *cria_robo(INSTR *p, short int e, int x, int y) está OK!\n");
 
@@ -509,8 +509,10 @@ int main(int argc, char const *argv[]) {
         printf("Nanhuma ou '-a' para testar as funções em arena.c\n");
         printf("'-e' para testar as funções em exercito.c\n");
         printf("'-r' para testar as funções em robo.c\n");
+        printf("'-v' para testar as funções em vetor.c\n");
         printf("'-o' para testar as funções em operando.c\n");
-        printf("'-c' para testar as funções em celula.c\n");
+        printf("'-ac' para testar as funções em acao.c\n");
+        printf("'-cel' para testar as funções em celula.c\n");
     }
     return 0;
 }

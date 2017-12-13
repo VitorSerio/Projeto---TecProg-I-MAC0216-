@@ -1,0 +1,1345 @@
+Terminals unused in grammar
+
+   PWR
+
+
+Grammar
+
+    0 $accept: Programa $end
+
+    1 Programa: Comando
+    2         | Programa Comando
+
+    3 Comando: AC OPEN NUMt SEP NUMt CLOSE
+    4        | Expr EOL
+    5        | Cond
+    6        | Loop
+    7        | Func
+    8        | PRINT Expr EOL
+    9        | RETt EOL
+   10        | RETt OPEN Expr CLOSE EOL
+
+   11 Expr: NUMt
+   12     | ID
+   13     | ID ASGN Expr
+   14     | Chamada
+   15     | Expr ADDt Expr
+   16     | Expr SUBt Expr
+   17     | Expr MULt Expr
+   18     | Expr DIVt Expr
+   19     | '-' Expr
+   20     | OPEN Expr CLOSE
+   21     | Expr LTt Expr
+   22     | Expr GTt Expr
+   23     | Expr LEt Expr
+   24     | Expr GEt Expr
+   25     | Expr EQt Expr
+   26     | Expr NEt Expr
+
+   27 $@1: %empty
+
+   28 Cond: IF OPEN Expr $@1 CLOSE Bloco
+
+   29 $@2: %empty
+
+   30 $@3: %empty
+
+   31 Loop: WHILE OPEN $@2 Expr $@3 CLOSE Bloco
+
+   32 Bloco: ABRE Comandos FECHA
+
+   33 Comandos: Comando
+   34         | Comandos Comando
+
+   35 $@4: %empty
+
+   36 $@5: %empty
+
+   37 Func: FUNC ID $@4 OPEN $@5 Args CLOSE Bloco
+
+   38 Args: %empty
+   39     | ID
+   40     | Args SEP ID
+
+   41 $@6: %empty
+
+   42 $@7: %empty
+
+   43 Chamada: ID OPEN $@6 ListParms $@7 CLOSE
+
+   44 ListParms: %empty
+   45          | Expr
+
+   46 $@8: %empty
+
+   47 ListParms: Expr $@8 SEP ListParms
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'-' (45) 19
+error (256)
+NUMt (258) 3 11
+ID (259) 12 13 37 39 40 43
+ADDt (260) 15
+SUBt (261) 16
+MULt (262) 17
+DIVt (263) 18
+ASGN (264) 13
+OPEN (265) 3 10 20 28 31 37 43
+CLOSE (266) 3 10 20 28 31 37 43
+RETt (267) 9 10
+EOL (268) 4 8 9 10
+EQt (269) 25
+NEt (270) 26
+LTt (271) 21
+LEt (272) 23
+GTt (273) 22
+GEt (274) 24
+ABRE (275) 32
+FECHA (276) 32
+SEP (277) 3 40 47
+IF (278) 28
+WHILE (279) 31
+FUNC (280) 37
+PRINT (281) 8
+AC (282) 3
+NEG (283)
+PWR (284)
+
+
+Nonterminals, with rules where they appear
+
+$accept (31)
+    on left: 0
+Programa (32)
+    on left: 1 2, on right: 0 2
+Comando (33)
+    on left: 3 4 5 6 7 8 9 10, on right: 1 2 33 34
+Expr (34)
+    on left: 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26, on right:
+    4 8 10 13 15 16 17 18 19 20 21 22 23 24 25 26 28 31 45 47
+Cond (35)
+    on left: 28, on right: 5
+$@1 (36)
+    on left: 27, on right: 28
+Loop (37)
+    on left: 31, on right: 6
+$@2 (38)
+    on left: 29, on right: 31
+$@3 (39)
+    on left: 30, on right: 31
+Bloco (40)
+    on left: 32, on right: 28 31 37
+Comandos (41)
+    on left: 33 34, on right: 32 34
+Func (42)
+    on left: 37, on right: 7
+$@4 (43)
+    on left: 35, on right: 37
+$@5 (44)
+    on left: 36, on right: 37
+Args (45)
+    on left: 38 39 40, on right: 37 40
+Chamada (46)
+    on left: 43, on right: 14
+$@6 (47)
+    on left: 41, on right: 43
+$@7 (48)
+    on left: 42, on right: 43
+ListParms (49)
+    on left: 44 45 47, on right: 43 47
+$@8 (50)
+    on left: 46, on right: 47
+
+
+State 0
+
+    0 $accept: . Programa $end
+
+    NUMt   shift, and go to state 1
+    ID     shift, and go to state 2
+    OPEN   shift, and go to state 3
+    RETt   shift, and go to state 4
+    IF     shift, and go to state 5
+    WHILE  shift, and go to state 6
+    FUNC   shift, and go to state 7
+    PRINT  shift, and go to state 8
+    AC     shift, and go to state 9
+    '-'    shift, and go to state 10
+
+    Programa  go to state 11
+    Comando   go to state 12
+    Expr      go to state 13
+    Cond      go to state 14
+    Loop      go to state 15
+    Func      go to state 16
+    Chamada   go to state 17
+
+
+State 1
+
+   11 Expr: NUMt .
+
+    $default  reduce using rule 11 (Expr)
+
+
+State 2
+
+   12 Expr: ID .
+   13     | ID . ASGN Expr
+   43 Chamada: ID . OPEN $@6 ListParms $@7 CLOSE
+
+    ASGN  shift, and go to state 18
+    OPEN  shift, and go to state 19
+
+    $default  reduce using rule 12 (Expr)
+
+
+State 3
+
+   20 Expr: OPEN . Expr CLOSE
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 20
+    Chamada  go to state 17
+
+
+State 4
+
+    9 Comando: RETt . EOL
+   10        | RETt . OPEN Expr CLOSE EOL
+
+    OPEN  shift, and go to state 21
+    EOL   shift, and go to state 22
+
+
+State 5
+
+   28 Cond: IF . OPEN Expr $@1 CLOSE Bloco
+
+    OPEN  shift, and go to state 23
+
+
+State 6
+
+   31 Loop: WHILE . OPEN $@2 Expr $@3 CLOSE Bloco
+
+    OPEN  shift, and go to state 24
+
+
+State 7
+
+   37 Func: FUNC . ID $@4 OPEN $@5 Args CLOSE Bloco
+
+    ID  shift, and go to state 25
+
+
+State 8
+
+    8 Comando: PRINT . Expr EOL
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 26
+    Chamada  go to state 17
+
+
+State 9
+
+    3 Comando: AC . OPEN NUMt SEP NUMt CLOSE
+
+    OPEN  shift, and go to state 27
+
+
+State 10
+
+   19 Expr: '-' . Expr
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 28
+    Chamada  go to state 17
+
+
+State 11
+
+    0 $accept: Programa . $end
+    2 Programa: Programa . Comando
+
+    $end   shift, and go to state 29
+    NUMt   shift, and go to state 1
+    ID     shift, and go to state 2
+    OPEN   shift, and go to state 3
+    RETt   shift, and go to state 4
+    IF     shift, and go to state 5
+    WHILE  shift, and go to state 6
+    FUNC   shift, and go to state 7
+    PRINT  shift, and go to state 8
+    AC     shift, and go to state 9
+    '-'    shift, and go to state 10
+
+    Comando  go to state 30
+    Expr     go to state 13
+    Cond     go to state 14
+    Loop     go to state 15
+    Func     go to state 16
+    Chamada  go to state 17
+
+
+State 12
+
+    1 Programa: Comando .
+
+    $default  reduce using rule 1 (Programa)
+
+
+State 13
+
+    4 Comando: Expr . EOL
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+
+    ADDt  shift, and go to state 31
+    SUBt  shift, and go to state 32
+    MULt  shift, and go to state 33
+    DIVt  shift, and go to state 34
+    EOL   shift, and go to state 35
+    EQt   shift, and go to state 36
+    NEt   shift, and go to state 37
+    LTt   shift, and go to state 38
+    LEt   shift, and go to state 39
+    GTt   shift, and go to state 40
+    GEt   shift, and go to state 41
+
+
+State 14
+
+    5 Comando: Cond .
+
+    $default  reduce using rule 5 (Comando)
+
+
+State 15
+
+    6 Comando: Loop .
+
+    $default  reduce using rule 6 (Comando)
+
+
+State 16
+
+    7 Comando: Func .
+
+    $default  reduce using rule 7 (Comando)
+
+
+State 17
+
+   14 Expr: Chamada .
+
+    $default  reduce using rule 14 (Expr)
+
+
+State 18
+
+   13 Expr: ID ASGN . Expr
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 42
+    Chamada  go to state 17
+
+
+State 19
+
+   43 Chamada: ID OPEN . $@6 ListParms $@7 CLOSE
+
+    $default  reduce using rule 41 ($@6)
+
+    $@6  go to state 43
+
+
+State 20
+
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   20     | OPEN Expr . CLOSE
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+
+    ADDt   shift, and go to state 31
+    SUBt   shift, and go to state 32
+    MULt   shift, and go to state 33
+    DIVt   shift, and go to state 34
+    CLOSE  shift, and go to state 44
+    EQt    shift, and go to state 36
+    NEt    shift, and go to state 37
+    LTt    shift, and go to state 38
+    LEt    shift, and go to state 39
+    GTt    shift, and go to state 40
+    GEt    shift, and go to state 41
+
+
+State 21
+
+   10 Comando: RETt OPEN . Expr CLOSE EOL
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 45
+    Chamada  go to state 17
+
+
+State 22
+
+    9 Comando: RETt EOL .
+
+    $default  reduce using rule 9 (Comando)
+
+
+State 23
+
+   28 Cond: IF OPEN . Expr $@1 CLOSE Bloco
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 46
+    Chamada  go to state 17
+
+
+State 24
+
+   31 Loop: WHILE OPEN . $@2 Expr $@3 CLOSE Bloco
+
+    $default  reduce using rule 29 ($@2)
+
+    $@2  go to state 47
+
+
+State 25
+
+   37 Func: FUNC ID . $@4 OPEN $@5 Args CLOSE Bloco
+
+    $default  reduce using rule 35 ($@4)
+
+    $@4  go to state 48
+
+
+State 26
+
+    8 Comando: PRINT Expr . EOL
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+
+    ADDt  shift, and go to state 31
+    SUBt  shift, and go to state 32
+    MULt  shift, and go to state 33
+    DIVt  shift, and go to state 34
+    EOL   shift, and go to state 49
+    EQt   shift, and go to state 36
+    NEt   shift, and go to state 37
+    LTt   shift, and go to state 38
+    LEt   shift, and go to state 39
+    GTt   shift, and go to state 40
+    GEt   shift, and go to state 41
+
+
+State 27
+
+    3 Comando: AC OPEN . NUMt SEP NUMt CLOSE
+
+    NUMt  shift, and go to state 50
+
+
+State 28
+
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   19     | '-' Expr .
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+
+    EQt  shift, and go to state 36
+    NEt  shift, and go to state 37
+    LTt  shift, and go to state 38
+    LEt  shift, and go to state 39
+    GTt  shift, and go to state 40
+    GEt  shift, and go to state 41
+
+    $default  reduce using rule 19 (Expr)
+
+
+State 29
+
+    0 $accept: Programa $end .
+
+    $default  accept
+
+
+State 30
+
+    2 Programa: Programa Comando .
+
+    $default  reduce using rule 2 (Programa)
+
+
+State 31
+
+   15 Expr: Expr ADDt . Expr
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 51
+    Chamada  go to state 17
+
+
+State 32
+
+   16 Expr: Expr SUBt . Expr
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 52
+    Chamada  go to state 17
+
+
+State 33
+
+   17 Expr: Expr MULt . Expr
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 53
+    Chamada  go to state 17
+
+
+State 34
+
+   18 Expr: Expr DIVt . Expr
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 54
+    Chamada  go to state 17
+
+
+State 35
+
+    4 Comando: Expr EOL .
+
+    $default  reduce using rule 4 (Comando)
+
+
+State 36
+
+   25 Expr: Expr EQt . Expr
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 55
+    Chamada  go to state 17
+
+
+State 37
+
+   26 Expr: Expr NEt . Expr
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 56
+    Chamada  go to state 17
+
+
+State 38
+
+   21 Expr: Expr LTt . Expr
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 57
+    Chamada  go to state 17
+
+
+State 39
+
+   23 Expr: Expr LEt . Expr
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 58
+    Chamada  go to state 17
+
+
+State 40
+
+   22 Expr: Expr GTt . Expr
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 59
+    Chamada  go to state 17
+
+
+State 41
+
+   24 Expr: Expr GEt . Expr
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 60
+    Chamada  go to state 17
+
+
+State 42
+
+   13 Expr: ID ASGN Expr .
+   15     | Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+
+    ADDt  shift, and go to state 31
+    SUBt  shift, and go to state 32
+    MULt  shift, and go to state 33
+    DIVt  shift, and go to state 34
+    EQt   shift, and go to state 36
+    NEt   shift, and go to state 37
+    LTt   shift, and go to state 38
+    LEt   shift, and go to state 39
+    GTt   shift, and go to state 40
+    GEt   shift, and go to state 41
+
+    $default  reduce using rule 13 (Expr)
+
+
+State 43
+
+   43 Chamada: ID OPEN $@6 . ListParms $@7 CLOSE
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    $default  reduce using rule 44 (ListParms)
+
+    Expr       go to state 61
+    Chamada    go to state 17
+    ListParms  go to state 62
+
+
+State 44
+
+   20 Expr: OPEN Expr CLOSE .
+
+    $default  reduce using rule 20 (Expr)
+
+
+State 45
+
+   10 Comando: RETt OPEN Expr . CLOSE EOL
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+
+    ADDt   shift, and go to state 31
+    SUBt   shift, and go to state 32
+    MULt   shift, and go to state 33
+    DIVt   shift, and go to state 34
+    CLOSE  shift, and go to state 63
+    EQt    shift, and go to state 36
+    NEt    shift, and go to state 37
+    LTt    shift, and go to state 38
+    LEt    shift, and go to state 39
+    GTt    shift, and go to state 40
+    GEt    shift, and go to state 41
+
+
+State 46
+
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+   28 Cond: IF OPEN Expr . $@1 CLOSE Bloco
+
+    ADDt  shift, and go to state 31
+    SUBt  shift, and go to state 32
+    MULt  shift, and go to state 33
+    DIVt  shift, and go to state 34
+    EQt   shift, and go to state 36
+    NEt   shift, and go to state 37
+    LTt   shift, and go to state 38
+    LEt   shift, and go to state 39
+    GTt   shift, and go to state 40
+    GEt   shift, and go to state 41
+
+    $default  reduce using rule 27 ($@1)
+
+    $@1  go to state 64
+
+
+State 47
+
+   31 Loop: WHILE OPEN $@2 . Expr $@3 CLOSE Bloco
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    Expr     go to state 65
+    Chamada  go to state 17
+
+
+State 48
+
+   37 Func: FUNC ID $@4 . OPEN $@5 Args CLOSE Bloco
+
+    OPEN  shift, and go to state 66
+
+
+State 49
+
+    8 Comando: PRINT Expr EOL .
+
+    $default  reduce using rule 8 (Comando)
+
+
+State 50
+
+    3 Comando: AC OPEN NUMt . SEP NUMt CLOSE
+
+    SEP  shift, and go to state 67
+
+
+State 51
+
+   15 Expr: Expr . ADDt Expr
+   15     | Expr ADDt Expr .
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+
+    MULt  shift, and go to state 33
+    DIVt  shift, and go to state 34
+    EQt   shift, and go to state 36
+    NEt   shift, and go to state 37
+    LTt   shift, and go to state 38
+    LEt   shift, and go to state 39
+    GTt   shift, and go to state 40
+    GEt   shift, and go to state 41
+
+    $default  reduce using rule 15 (Expr)
+
+
+State 52
+
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   16     | Expr SUBt Expr .
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+
+    MULt  shift, and go to state 33
+    DIVt  shift, and go to state 34
+    EQt   shift, and go to state 36
+    NEt   shift, and go to state 37
+    LTt   shift, and go to state 38
+    LEt   shift, and go to state 39
+    GTt   shift, and go to state 40
+    GEt   shift, and go to state 41
+
+    $default  reduce using rule 16 (Expr)
+
+
+State 53
+
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   17     | Expr MULt Expr .
+   18     | Expr . DIVt Expr
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+
+    EQt  shift, and go to state 36
+    NEt  shift, and go to state 37
+    LTt  shift, and go to state 38
+    LEt  shift, and go to state 39
+    GTt  shift, and go to state 40
+    GEt  shift, and go to state 41
+
+    $default  reduce using rule 17 (Expr)
+
+
+State 54
+
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   18     | Expr DIVt Expr .
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+
+    EQt  shift, and go to state 36
+    NEt  shift, and go to state 37
+    LTt  shift, and go to state 38
+    LEt  shift, and go to state 39
+    GTt  shift, and go to state 40
+    GEt  shift, and go to state 41
+
+    $default  reduce using rule 18 (Expr)
+
+
+State 55
+
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   25     | Expr EQt Expr .
+   26     | Expr . NEt Expr
+
+    $default  reduce using rule 25 (Expr)
+
+
+State 56
+
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+   26     | Expr NEt Expr .
+
+    $default  reduce using rule 26 (Expr)
+
+
+State 57
+
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   21     | Expr . LTt Expr
+   21     | Expr LTt Expr .
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+
+    $default  reduce using rule 21 (Expr)
+
+
+State 58
+
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   23     | Expr LEt Expr .
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+
+    $default  reduce using rule 23 (Expr)
+
+
+State 59
+
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   22     | Expr GTt Expr .
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+
+    $default  reduce using rule 22 (Expr)
+
+
+State 60
+
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   24     | Expr GEt Expr .
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+
+    $default  reduce using rule 24 (Expr)
+
+
+State 61
+
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+   45 ListParms: Expr .
+   47          | Expr . $@8 SEP ListParms
+
+    ADDt  shift, and go to state 31
+    SUBt  shift, and go to state 32
+    MULt  shift, and go to state 33
+    DIVt  shift, and go to state 34
+    EQt   shift, and go to state 36
+    NEt   shift, and go to state 37
+    LTt   shift, and go to state 38
+    LEt   shift, and go to state 39
+    GTt   shift, and go to state 40
+    GEt   shift, and go to state 41
+
+    SEP       reduce using rule 46 ($@8)
+    $default  reduce using rule 45 (ListParms)
+
+    $@8  go to state 68
+
+
+State 62
+
+   43 Chamada: ID OPEN $@6 ListParms . $@7 CLOSE
+
+    $default  reduce using rule 42 ($@7)
+
+    $@7  go to state 69
+
+
+State 63
+
+   10 Comando: RETt OPEN Expr CLOSE . EOL
+
+    EOL  shift, and go to state 70
+
+
+State 64
+
+   28 Cond: IF OPEN Expr $@1 . CLOSE Bloco
+
+    CLOSE  shift, and go to state 71
+
+
+State 65
+
+   15 Expr: Expr . ADDt Expr
+   16     | Expr . SUBt Expr
+   17     | Expr . MULt Expr
+   18     | Expr . DIVt Expr
+   21     | Expr . LTt Expr
+   22     | Expr . GTt Expr
+   23     | Expr . LEt Expr
+   24     | Expr . GEt Expr
+   25     | Expr . EQt Expr
+   26     | Expr . NEt Expr
+   31 Loop: WHILE OPEN $@2 Expr . $@3 CLOSE Bloco
+
+    ADDt  shift, and go to state 31
+    SUBt  shift, and go to state 32
+    MULt  shift, and go to state 33
+    DIVt  shift, and go to state 34
+    EQt   shift, and go to state 36
+    NEt   shift, and go to state 37
+    LTt   shift, and go to state 38
+    LEt   shift, and go to state 39
+    GTt   shift, and go to state 40
+    GEt   shift, and go to state 41
+
+    $default  reduce using rule 30 ($@3)
+
+    $@3  go to state 72
+
+
+State 66
+
+   37 Func: FUNC ID $@4 OPEN . $@5 Args CLOSE Bloco
+
+    $default  reduce using rule 36 ($@5)
+
+    $@5  go to state 73
+
+
+State 67
+
+    3 Comando: AC OPEN NUMt SEP . NUMt CLOSE
+
+    NUMt  shift, and go to state 74
+
+
+State 68
+
+   47 ListParms: Expr $@8 . SEP ListParms
+
+    SEP  shift, and go to state 75
+
+
+State 69
+
+   43 Chamada: ID OPEN $@6 ListParms $@7 . CLOSE
+
+    CLOSE  shift, and go to state 76
+
+
+State 70
+
+   10 Comando: RETt OPEN Expr CLOSE EOL .
+
+    $default  reduce using rule 10 (Comando)
+
+
+State 71
+
+   28 Cond: IF OPEN Expr $@1 CLOSE . Bloco
+
+    ABRE  shift, and go to state 77
+
+    Bloco  go to state 78
+
+
+State 72
+
+   31 Loop: WHILE OPEN $@2 Expr $@3 . CLOSE Bloco
+
+    CLOSE  shift, and go to state 79
+
+
+State 73
+
+   37 Func: FUNC ID $@4 OPEN $@5 . Args CLOSE Bloco
+
+    ID  shift, and go to state 80
+
+    $default  reduce using rule 38 (Args)
+
+    Args  go to state 81
+
+
+State 74
+
+    3 Comando: AC OPEN NUMt SEP NUMt . CLOSE
+
+    CLOSE  shift, and go to state 82
+
+
+State 75
+
+   47 ListParms: Expr $@8 SEP . ListParms
+
+    NUMt  shift, and go to state 1
+    ID    shift, and go to state 2
+    OPEN  shift, and go to state 3
+    '-'   shift, and go to state 10
+
+    $default  reduce using rule 44 (ListParms)
+
+    Expr       go to state 61
+    Chamada    go to state 17
+    ListParms  go to state 83
+
+
+State 76
+
+   43 Chamada: ID OPEN $@6 ListParms $@7 CLOSE .
+
+    $default  reduce using rule 43 (Chamada)
+
+
+State 77
+
+   32 Bloco: ABRE . Comandos FECHA
+
+    NUMt   shift, and go to state 1
+    ID     shift, and go to state 2
+    OPEN   shift, and go to state 3
+    RETt   shift, and go to state 4
+    IF     shift, and go to state 5
+    WHILE  shift, and go to state 6
+    FUNC   shift, and go to state 7
+    PRINT  shift, and go to state 8
+    AC     shift, and go to state 9
+    '-'    shift, and go to state 10
+
+    Comando   go to state 84
+    Expr      go to state 13
+    Cond      go to state 14
+    Loop      go to state 15
+    Comandos  go to state 85
+    Func      go to state 16
+    Chamada   go to state 17
+
+
+State 78
+
+   28 Cond: IF OPEN Expr $@1 CLOSE Bloco .
+
+    $default  reduce using rule 28 (Cond)
+
+
+State 79
+
+   31 Loop: WHILE OPEN $@2 Expr $@3 CLOSE . Bloco
+
+    ABRE  shift, and go to state 77
+
+    Bloco  go to state 86
+
+
+State 80
+
+   39 Args: ID .
+
+    $default  reduce using rule 39 (Args)
+
+
+State 81
+
+   37 Func: FUNC ID $@4 OPEN $@5 Args . CLOSE Bloco
+   40 Args: Args . SEP ID
+
+    CLOSE  shift, and go to state 87
+    SEP    shift, and go to state 88
+
+
+State 82
+
+    3 Comando: AC OPEN NUMt SEP NUMt CLOSE .
+
+    $default  reduce using rule 3 (Comando)
+
+
+State 83
+
+   47 ListParms: Expr $@8 SEP ListParms .
+
+    $default  reduce using rule 47 (ListParms)
+
+
+State 84
+
+   33 Comandos: Comando .
+
+    $default  reduce using rule 33 (Comandos)
+
+
+State 85
+
+   32 Bloco: ABRE Comandos . FECHA
+   34 Comandos: Comandos . Comando
+
+    NUMt   shift, and go to state 1
+    ID     shift, and go to state 2
+    OPEN   shift, and go to state 3
+    RETt   shift, and go to state 4
+    FECHA  shift, and go to state 89
+    IF     shift, and go to state 5
+    WHILE  shift, and go to state 6
+    FUNC   shift, and go to state 7
+    PRINT  shift, and go to state 8
+    AC     shift, and go to state 9
+    '-'    shift, and go to state 10
+
+    Comando  go to state 90
+    Expr     go to state 13
+    Cond     go to state 14
+    Loop     go to state 15
+    Func     go to state 16
+    Chamada  go to state 17
+
+
+State 86
+
+   31 Loop: WHILE OPEN $@2 Expr $@3 CLOSE Bloco .
+
+    $default  reduce using rule 31 (Loop)
+
+
+State 87
+
+   37 Func: FUNC ID $@4 OPEN $@5 Args CLOSE . Bloco
+
+    ABRE  shift, and go to state 77
+
+    Bloco  go to state 91
+
+
+State 88
+
+   40 Args: Args SEP . ID
+
+    ID  shift, and go to state 92
+
+
+State 89
+
+   32 Bloco: ABRE Comandos FECHA .
+
+    $default  reduce using rule 32 (Bloco)
+
+
+State 90
+
+   34 Comandos: Comandos Comando .
+
+    $default  reduce using rule 34 (Comandos)
+
+
+State 91
+
+   37 Func: FUNC ID $@4 OPEN $@5 Args CLOSE Bloco .
+
+    $default  reduce using rule 37 (Func)
+
+
+State 92
+
+   40 Args: Args SEP ID .
+
+    $default  reduce using rule 40 (Args)

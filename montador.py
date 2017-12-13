@@ -45,7 +45,7 @@ def getLines():
             instrs[i][1] = labels.get(instrs[i][1], instrs[i][1])
 
         return instrs
-    """Fim getLabels, Volta getLines"""
+    """Fim fixLabels, Volta getLines"""
 
     instrs = [] # instruções
     labels = {} # dicionário

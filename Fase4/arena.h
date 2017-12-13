@@ -22,6 +22,7 @@ void destroi_arena(Arena *a);
 void Atualiza(Arena *a, int instrucoes);
 void InsereExercito(Arena *a, short int pos, short int tam);
 void RemoveExercito(Arena *a, short int pos);
+void RemoveRobo(Robo *r);
 OPERANDO Sistema(Maquina *m, OPERANDO op);
 void imprime_mapa(Arena *a);
 

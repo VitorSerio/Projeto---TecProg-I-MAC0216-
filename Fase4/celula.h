@@ -23,6 +23,6 @@ typedef struct Celula {
 
 Celula *cria_celula(Terreno t, short int c);
 void destroi_celula(Celula *cel);
-char *toString_celula(Celula cel);
+char *toString_celula(Celula *cel);
 
 #endif

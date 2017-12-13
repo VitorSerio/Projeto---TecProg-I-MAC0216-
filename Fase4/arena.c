@@ -291,9 +291,8 @@ OPERANDO Sistema(Maquina *m, OPERANDO op) {
 void imprime_mapa(Arena *a) {
     for (int i = 0; i < atamanho; i++) {
         for (int j = 0; j < atamanho; j++) {
-            if (!&mapa[i][j]) printf("NULL   ");
-            else printf("%d,%02d,%d ", mapa[i][j]->t, mapa[i][j]->c,
-                        mapa[i][j]->oc);
+            if (!&mapa[i][j]) printf("{NULL} ");
+            else printf("%s ", toString_celula(mapa[i][j]));
         }
         printf("\n");
     }

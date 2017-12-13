@@ -1,4 +1,3 @@
-prog?=prog
 src = $(wildcard *.c)
 obj = $(src:.c=.o)
 

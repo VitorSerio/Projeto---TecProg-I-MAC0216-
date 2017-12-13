@@ -1,0 +1,24 @@
+x = 34;
+y = 45;
+z = x+y;
+
+def v() {ret(43/5);}
+
+if (x > 2) {
+  y = y - v();
+ }
+
+k = 2;
+while (k > 0) {
+ k = k-1;
+ print k;
+}
+
+acao(k,1);
+print 1;
+acao(1,-2);
+print 1;
+acao(4,3);
+print 1;
+
+print z+(y/100);

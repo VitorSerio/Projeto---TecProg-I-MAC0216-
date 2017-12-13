@@ -39,7 +39,7 @@ char *CODES[] = {
     "ALC",
     "FRE",
     "ATR",
-    "SYS"
+    "SIS"
 };
 #else
 #   define D(X)
@@ -54,24 +54,6 @@ static void Fatal(char *msg, int cod) {
     exit(cod);
 }
 
-Maquina *cria_maquina(INSTR *p) {
-    Maquina *m = (Maquina*)malloc(sizeof(Maquina));
-    if (!m) Fatal("Memória insuficiente",4);
-    m->pil = cria_pilha();
-    m->exec = cria_pilha();
-    m->ip = 0;
-    m->rbp = 0;
-    m->prog = p;
-    return m;
-}
-
-void destroi_maquina(Maquina *m) {
-    destroi_pilha(m->pil);
-    destroi_pilha(m->exec);
-    free(m);
-    m = NULL;
-}
-
 /* Alguns macros para facilitar a leitura do código */
 #define ip (m->ip)
 #define pil (m->pil)
@@ -79,6 +61,25 @@ void destroi_maquina(Maquina *m) {
 #define prg (m->prog)
 #define rbp (m->rbp)
 #define rsp (exec->topo)
+
+Maquina *cria_maquina(INSTR *p) {
+    Maquina *m = (Maquina*) malloc(sizeof(Maquina));
+    if (!m) Fatal("Memória insuficiente",4);
+
+    pil = cria_pilha();
+    exec = cria_pilha();
+    ip = 0;
+    rbp = 0;
+    prg = p;
+    return m;
+}
+
+void destroi_maquina(Maquina *m) {
+    destroi_pilha(pil);
+    destroi_pilha(exec);
+    free(m);
+    m = NULL;
+}
 
 void exec_maquina(Maquina *m, int n) {
     int i;
@@ -365,7 +366,7 @@ void exec_maquina(Maquina *m, int n) {
                 /*  */
                 if (arg.t == ACAO) {
                     tmp1 = Sistema(m, arg);
-                    if (tmp1.val.ac.t == GET) empilha(pil, tmp1);
+                    if (tmp1.val.ac.t == INF) empilha(pil, tmp1);
                     break;
                 }
                 Fatal("Erro: O sistema só pode ser chamado por uma ação", 4);

@@ -33,11 +33,11 @@ void destroi_celula(Celula *cel) {
     cel = NULL;
 }
 
-char *toString_celula(Celula cel) {
+char *toString_celula(Celula *cel) {
     int size = 20;
     char *res = (char*)malloc(size);
     if (!res) Fatal("Memória insuficiente para char", 4);
-    char *t = toString_terreno(cel.t);
-    snprintf(res, size, "{%s, %d, %d}", t, cel.c, cel.oc);
+    char *t = toString_terreno(cel->t);
+    snprintf(res, size, "{%s, %d, %d}", t, cel->c, cel->oc);
     return res;
 }
